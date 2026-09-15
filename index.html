@@ -3,8 +3,17 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Servivett · Centro Veterinario</title>
+  <title>Servivett · Centro Veterinario Yaruquí</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Fuente cursiva elegante estilo Edwardian Script -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap" rel="stylesheet">
+  <style>
+    .font-edwardian {
+      font-family: 'Great Vibes', 'Edwardian Script ITC', cursive;
+    }
+  </style>
 </head>
 <body class="bg-teal-50/40 text-slate-800 font-sans antialiased">
 
@@ -16,8 +25,8 @@
           🐾
         </span>
         <div>
-          <h1 class="text-2xl font-black tracking-tight leading-none">Servivett</h1>
-          <span class="text-xs text-teal-200 uppercase tracking-widest font-semibold">Atención Veterinaria · Yaruquí</span>
+          <h1 class="text-3xl font-normal leading-none font-edwardian tracking-wide">Servivett</h1>
+          <span class="text-xs text-teal-200 uppercase tracking-widest font-semibold block mt-1">Atención Veterinaria · Yaruquí</span>
         </div>
       </div>
 
@@ -38,31 +47,37 @@
     <!-- Tarjeta de Presentación Central -->
     <section class="bg-white rounded-3xl p-8 md:p-10 border border-teal-100 shadow-xl shadow-teal-900/5 mb-12">
       
-      <!-- Encabezado de la Tarjeta (Sin botones de agendamiento) -->
       <div class="border-b border-teal-50 pb-6">
-        <!-- Estado Dinámico en Tiempo Real -->
-        <div id="status-badge" class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-bold border transition-colors mb-3">
+        <!-- Estado Dinámico -->
+        <div id="status-badge" class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-bold border transition-colors">
           <span id="status-dot" class="w-2.5 h-2.5 rounded-full animate-pulse"></span>
-          <span id="status-text">Comprobando disponibilidad...</span>
+          <span id="status-text">Comprobando horario...</span>
         </div>
 
-        <h2 class="text-3xl md:text-4xl font-extrabold text-slate-900 tracking-tight">
+        <!-- Título con separación (mt-6) y tipografía cursiva negra -->
+        <h2 class="text-5xl md:text-6xl font-normal text-black font-edwardian tracking-wide mt-6 mb-2">
           Servivett
         </h2>
-        <p class="text-slate-600 mt-2 text-base max-w-2xl">
-          Atención médica veterinaria, cirugías, planes vacunales y estética profesional en la parroquia de Yaruquí.
+        <p class="text-slate-600 text-base max-w-2xl leading-relaxed">
+          Atención médica veterinaria, cirugías, planes vacunales y estética profesional en la parroquia de Yaruquí[cite: 1].
         </p>
 
-        <!-- Banner Informativo: Política 24 Horas Exclusiva -->
-        <div class="mt-4 p-4 rounded-2xl bg-teal-50/70 border border-teal-100 text-xs leading-relaxed text-teal-900">
-          <span class="font-bold flex items-center gap-1 text-teal-800 mb-0.5">
-            🚨 Atención de Emergencias 24 Horas
-          </span>
-          Servicio nocturno y de guardia médica continuo disponible <strong>únicamente para pacientes registrados previamente en nuestra base de datos clínica</strong> (no disponible como guardia abierta general al público).
+        <!-- Política de Emergencias y Citas Previas -->
+        <div class="mt-5 p-4 rounded-2xl bg-teal-50/70 border border-teal-100 text-xs leading-relaxed text-teal-950 space-y-2">
+          <div class="flex items-center gap-1.5 font-bold text-teal-900">
+            <span>🚨</span>
+            <span>Protocolo de Atención Extrahorario y Emergencias</span>
+          </div>
+          <p>
+            • <strong>Fuera del turno regular:</strong> Sí atendemos pasada la jornada y domingos, pero <strong>únicamente previa coordinación por WhatsApp o llamada</strong>. No se mantiene guardia abierta presencial sin aviso.
+          </p>
+          <p>
+            • <strong>Urgencias nocturnas (24H):</strong> Servicio exclusivo bajo cita previa y reservado para <strong>pacientes registrados en nuestra base clínica</strong>.
+          </p>
         </div>
       </div>
 
-      <!-- Datos de Contacto y Horario Dinámico -->
+      <!-- Datos de Contacto y Horarios -->
       <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 pt-6">
         
         <!-- Ubicación -->
@@ -82,7 +97,7 @@
             📞
           </div>
           <div>
-            <h3 class="text-xs uppercase font-bold text-slate-400">WhatsApp Oficial</h3>
+            <h3 class="text-xs uppercase font-bold text-slate-400">WhatsApp / Avisos</h3>
             <a href="https://wa.me/593991078623" target="_blank" class="text-sm font-semibold text-teal-700 hover:underline">
               099 107 8623
             </a>
@@ -97,14 +112,14 @@
           <div>
             <h3 class="text-xs uppercase font-bold text-slate-400">Atención en Clínica</h3>
             <p class="text-sm font-semibold text-slate-800 leading-tight">Lun - Sáb: 8:00 AM - 8:00 PM</p>
-            <p class="text-xs text-slate-500 mt-0.5" id="dynamic-subtext">24H para registrados</p>
+            <p class="text-xs text-slate-500 mt-0.5" id="dynamic-subtext">Domingos y extrahorario: Previa cita</p>
           </div>
         </div>
 
       </div>
     </section>
 
-    <!-- Sección de Ubicación con Coordenadas Exactas (0°09'36.3"S 78°19'17.1"W) -->
+    <!-- Mapa Exacto (0°09'36.3"S 78°19'17.1"W) -->
     <section class="bg-white rounded-3xl p-6 border border-teal-100 shadow-sm">
       <div class="flex justify-between items-end mb-4">
         <div>
@@ -119,7 +134,6 @@
         </a>
       </div>
 
-      <!-- Mapa interactivo fijado exactamente en -0.160083, -78.321417 -->
       <div class="w-full h-80 rounded-2xl overflow-hidden border border-teal-100 shadow-inner">
         <iframe 
           title="Ubicación Servivett"
@@ -135,31 +149,37 @@
     © 2026 Servivett · Todos los derechos reservados. Yaruquí, Pichincha, Ecuador.
   </footer>
 
-  <!-- Lógica Dinámica de Horarios -->
+  <!-- Lógica Dinámica Adaptada -->
   <script>
     function checkClinicSchedule() {
       const now = new Date();
-      const day = now.getDay(); // 0 = Domingo, 1 = Lunes, ..., 6 = Sábado
-      const hour = now.getHours(); // 0 a 23
+      const day = now.getDay(); // 0 = Domingo, 1-6 = Lunes a Sábado
+      const hour = now.getHours();
 
       const badge = document.getElementById('status-badge');
       const dot = document.getElementById('status-dot');
       const text = document.getElementById('status-text');
       const subtext = document.getElementById('dynamic-subtext');
 
-      // Horario regular: Lunes a Sábado de 08:00 a 20:00 (8 AM a 8 PM)
-      const isOpenRegular = (day >= 1 && day <= 6) && (hour >= 8 && hour < 20);
+      const isRegularHours = (day >= 1 && day <= 6) && (hour >= 8 && hour < 20);
 
-      if (isOpenRegular) {
+      if (isRegularHours) {
         badge.className = "inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200";
         dot.className = "w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse";
         text.textContent = "Abierto ahora · Horario habitual";
-        subtext.textContent = "Turno regular hasta las 8:00 PM";
+        subtext.textContent = "Atención regular hasta las 8:00 PM";
+      } else if (day === 0) {
+        // Caso Domingos
+        badge.className = "inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-bold bg-sky-50 text-sky-700 border border-sky-200";
+        dot.className = "w-2.5 h-2.5 rounded-full bg-sky-500";
+        text.textContent = "Domingo · Atención únicamente bajo cita";
+        subtext.textContent = "Coordina previamente por WhatsApp";
       } else {
+        // Noches/madrugadas (Lunes a Sábado)
         badge.className = "inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-bold bg-amber-50 text-amber-700 border border-amber-200";
         dot.className = "w-2.5 h-2.5 rounded-full bg-amber-500";
-        text.textContent = "Guardia restringida · Confirmar disponibilidad por WhatsApp";
-        subtext.textContent = "Fuera de horario habitual (24H solo pacientes registrados)";
+        text.textContent = "Fuera de turno regular · Avisar previamente";
+        subtext.textContent = "Se atiende solo si coordinas por WhatsApp";
       }
     }
 
