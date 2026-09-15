@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Servivett · Centro Veterinario Yaruquí</title>
+  <title>Servivett · Centro Veterinario</title>
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-teal-50/40 text-slate-800 font-sans antialiased">
@@ -22,7 +22,7 @@
       </div>
 
       <!-- Enlace Directo WhatsApp -->
-      <a href="https://wa.me/593991078623?text=Hola%20Servivett,%20deseo%20solicitar%20información%20y%20agendar%20una%20cita" 
+      <a href="https://wa.me/593991078623?text=Hola%20Servivett,%20deseo%20hacer%20una%20consulta" 
          target="_blank" 
          class="bg-teal-500 hover:bg-teal-600 active:scale-95 text-white text-sm font-bold px-5 py-2.5 rounded-full shadow transition-all flex items-center gap-2">
         <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
@@ -37,27 +37,29 @@
 
     <!-- Tarjeta de Presentación Central -->
     <section class="bg-white rounded-3xl p-8 md:p-10 border border-teal-100 shadow-xl shadow-teal-900/5 mb-12">
-      <div class="flex flex-col md:flex-row items-center justify-between gap-8 border-b border-teal-50 pb-8">
-        <div>
-          <!-- Estado Dinámico en Tiempo Real -->
-          <div id="status-badge" class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-bold border transition-colors mb-3">
-            <span id="status-dot" class="w-2.5 h-2.5 rounded-full animate-pulse"></span>
-            <span id="status-text">Comprobando disponibilidad...</span>
-          </div>
-
-          <h2 class="text-3xl md:text-4xl font-extrabold text-slate-900 tracking-tight">
-            Servivett
-          </h2>
-          <p class="text-slate-600 mt-2 text-base max-w-xl">
-            Atención médica veterinaria, cirugías, planes vacunales y estética especializada para mascotas en la parroquia de Yaruquí.
-          </p>
+      
+      <!-- Encabezado de la Tarjeta (Sin botones de agendamiento) -->
+      <div class="border-b border-teal-50 pb-6">
+        <!-- Estado Dinámico en Tiempo Real -->
+        <div id="status-badge" class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-bold border transition-colors mb-3">
+          <span id="status-dot" class="w-2.5 h-2.5 rounded-full animate-pulse"></span>
+          <span id="status-text">Comprobando disponibilidad...</span>
         </div>
 
-        <a href="https://wa.me/593991078623?text=Hola%20Servivett,%20deseo%20agendar%20una%20atención" 
-           target="_blank" 
-           class="whitespace-nowrap bg-teal-600 hover:bg-teal-700 text-white font-bold text-sm px-6 py-3.5 rounded-2xl shadow-md transition-all active:scale-95">
-          Agendar Consulta
-        </a>
+        <h2 class="text-3xl md:text-4xl font-extrabold text-slate-900 tracking-tight">
+          Servivett
+        </h2>
+        <p class="text-slate-600 mt-2 text-base max-w-2xl">
+          Atención médica veterinaria, cirugías, planes vacunales y estética profesional en la parroquia de Yaruquí.
+        </p>
+
+        <!-- Banner Informativo: Política 24 Horas Exclusiva -->
+        <div class="mt-4 p-4 rounded-2xl bg-teal-50/70 border border-teal-100 text-xs leading-relaxed text-teal-900">
+          <span class="font-bold flex items-center gap-1 text-teal-800 mb-0.5">
+            🚨 Atención de Emergencias 24 Horas
+          </span>
+          Servicio nocturno y de guardia médica continuo disponible <strong>únicamente para pacientes registrados previamente en nuestra base de datos clínica</strong> (no disponible como guardia abierta general al público).
+        </div>
       </div>
 
       <!-- Datos de Contacto y Horario Dinámico -->
@@ -80,7 +82,7 @@
             📞
           </div>
           <div>
-            <h3 class="text-xs uppercase font-bold text-slate-400">Teléfono / WhatsApp</h3>
+            <h3 class="text-xs uppercase font-bold text-slate-400">WhatsApp Oficial</h3>
             <a href="https://wa.me/593991078623" target="_blank" class="text-sm font-semibold text-teal-700 hover:underline">
               099 107 8623
             </a>
@@ -93,23 +95,23 @@
             ⏰
           </div>
           <div>
-            <h3 class="text-xs uppercase font-bold text-slate-400">Horario de Atención</h3>
+            <h3 class="text-xs uppercase font-bold text-slate-400">Atención en Clínica</h3>
             <p class="text-sm font-semibold text-slate-800 leading-tight">Lun - Sáb: 8:00 AM - 8:00 PM</p>
-            <p class="text-xs text-slate-500 mt-0.5" id="dynamic-subtext">Domingos previa cita</p>
+            <p class="text-xs text-slate-500 mt-0.5" id="dynamic-subtext">24H para registrados</p>
           </div>
         </div>
 
       </div>
     </section>
 
-    <!-- Mapa con tus Coordenadas Exactas -->
+    <!-- Sección de Ubicación con Coordenadas Exactas (0°09'36.3"S 78°19'17.1"W) -->
     <section class="bg-white rounded-3xl p-6 border border-teal-100 shadow-sm">
       <div class="flex justify-between items-end mb-4">
         <div>
-          <h3 class="text-xl font-bold text-slate-900">Nuestra Ubicación</h3>
-          <p class="text-sm text-slate-500">Punto exacto de atención en Yaruquí</p>
+          <h3 class="text-xl font-bold text-slate-900">Ubicación Exacta</h3>
+          <p class="text-sm text-slate-500">Punto de atención clínica en Yaruquí</p>
         </div>
-        <a href="https://www.google.com/maps/search/?api=1&query=-0.1685,-78.3150" 
+        <a href="https://www.google.com/maps/search/?api=1&query=-0.160083,-78.321417" 
            target="_blank" 
            class="text-xs font-semibold text-teal-700 hover:text-teal-900 underline flex items-center gap-1">
           <span>Abrir en Google Maps</span>
@@ -117,12 +119,12 @@
         </a>
       </div>
 
-      <!-- Iframe centrado en tus coordenadas: -0.1685, -78.3150 -->
+      <!-- Mapa interactivo fijado exactamente en -0.160083, -78.321417 -->
       <div class="w-full h-80 rounded-2xl overflow-hidden border border-teal-100 shadow-inner">
         <iframe 
-          title="Ubicación Servivett en Yaruquí"
+          title="Ubicación Servivett"
           class="w-full h-full border-0" 
-          src="https://www.openstreetmap.org/export/embed.html?bbox=-78.3250%2C-0.1760%2C-78.3050%2C-0.1610&amp;layer=mapnik&amp;marker=-0.1685%2C-78.3150">
+          src="https://www.openstreetmap.org/export/embed.html?bbox=-78.326417%2C-0.165083%2C-78.316417%2C-0.155083&amp;layer=mapnik&amp;marker=-0.160083%2C-78.321417">
         </iframe>
       </div>
     </section>
@@ -145,26 +147,28 @@
       const text = document.getElementById('status-text');
       const subtext = document.getElementById('dynamic-subtext');
 
-      // Abierto: Lunes (1) a Sábado (6) de 8:00 AM a 8:00 PM (hora 8 a 19)
-      const isOpen = (day >= 1 && day <= 6) && (hour >= 8 && hour < 20);
+      // Horario regular: Lunes a Sábado de 08:00 a 20:00 (8 AM a 8 PM)
+      const isOpenRegular = (day >= 1 && day <= 6) && (hour >= 8 && hour < 20);
 
-      if (isOpen) {
+      if (isOpenRegular) {
         badge.className = "inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200";
         dot.className = "w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse";
-        text.textContent = "Abierto ahora · Atendiendo en clínica";
-        subtext.textContent = "Horario habitual hasta las 8:00 PM";
+        text.textContent = "Abierto ahora · Horario habitual";
+        subtext.textContent = "Turno regular hasta las 8:00 PM";
       } else {
         badge.className = "inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-bold bg-amber-50 text-amber-700 border border-amber-200";
         dot.className = "w-2.5 h-2.5 rounded-full bg-amber-500";
-        text.textContent = "Confirmar disponibilidad por WhatsApp";
-        subtext.textContent = "Fuera de turno regular · Escríbenos";
+        text.textContent = "Guardia restringida · Confirmar disponibilidad por WhatsApp";
+        subtext.textContent = "Fuera de horario habitual (24H solo pacientes registrados)";
       }
     }
 
     checkClinicSchedule();
-    // Revisa cada 60 segundos por si cambia la hora mientras el cliente navega
     setInterval(checkClinicSchedule, 60000);
   </script>
+
+</body>
+</html>
 
 </body>
 </html>
