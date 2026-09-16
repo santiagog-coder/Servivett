@@ -7,7 +7,7 @@
   
   <link rel="icon" type="image/png" href="icono%20pesta%C3%B1as.png">
 
-  <!-- Inter Font (Estilo Apple UI / Balmesvet) -->
+  <!-- Inter / Plus Jakarta Sans (Apple & Balmesvet Style) -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -39,23 +39,23 @@
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://www.servivett.com">
   <meta property="og:title" content="Servivett · Clínica Veterinaria Yaruquí">
-  <meta property="og:description" content="Atención médica veterinaria, cirugías, vacunación y hospitalización en Yaruquí. WhatsApp: 099 107 8623.">
+  <meta property="og:description" content="Rayos X, ecografía, laboratorio clínico, cirugías, farmacia, pet shop y estética profesional en Yaruquí. WhatsApp: 099 107 8623.">
   <meta property="og:image" content="https://www.servivett.com/logo.png">
 </head>
 <body class="bg-brand-surface text-slate-900 font-sans antialiased selection:bg-brand selection:text-white">
 
-  <!-- Header Flotante con efecto Frosted Glass (Apple Style) -->
-  <header class="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-brand-border/60 transition-all duration-300">
+  <!-- Header Flotante Frosted Glass -->
+  <header class="sticky top-0 z-50 bg-white/85 backdrop-blur-md border-b border-brand-border/60 transition-all duration-300">
     <div class="max-w-6xl mx-auto px-6 h-20 flex items-center justify-between">
       
-      <!-- Menú Navegación Izquierda -->
+      <!-- Navegación Izquierda -->
       <nav class="hidden md:flex items-center gap-8 text-xs font-semibold tracking-wider text-slate-600 uppercase">
         <a href="#servicios" class="hover:text-brand-dark transition-colors duration-200">Servicios</a>
         <a href="#horarios" class="hover:text-brand-dark transition-colors duration-200">Guardia & Citas</a>
         <a href="#ubicacion" class="hover:text-brand-dark transition-colors duration-200">Ubicación</a>
       </nav>
 
-      <!-- Logo Centrado con Filtro Adaptativo -->
+      <!-- Logo Centrado -->
       <div class="flex flex-col items-center">
         <a href="#" class="group transition-transform duration-300 hover:scale-105">
           <img src="logo.png" alt="Servivett Clínica Veterinaria" class="h-10 md:h-12 w-auto object-contain">
@@ -63,7 +63,7 @@
         <span class="text-[9px] font-bold uppercase tracking-[0.25em] text-brand-dark">Clínica Veterinaria</span>
       </div>
 
-      <!-- Botón de Contacto / Urgencias -->
+      <!-- Botón WhatsApp -->
       <div class="flex items-center">
         <a href="https://wa.me/593991078623?text=Hola%20Servivett,%20deseo%20hacer%20una%20consulta" 
            target="_blank" 
@@ -78,97 +78,240 @@
     </div>
   </header>
 
-  <!-- Hero Section Estilo Apple -->
-  <section class="max-w-5xl mx-auto px-6 pt-20 pb-16 text-center">
+  <!-- Hero Section -->
+  <section class="max-w-5xl mx-auto px-6 pt-16 pb-14 text-center">
     
-    <!-- Status Dinámico en Tiempo Real -->
-    <div class="inline-flex mb-8">
+    <!-- Status Dinámico -->
+    <div class="inline-flex mb-6">
       <div id="status-badge" class="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full text-xs font-semibold tracking-wide border shadow-sm transition-all duration-500">
         <span id="status-dot" class="w-2 h-2 rounded-full"></span>
         <span id="status-text">Comprobando disponibilidad médica...</span>
       </div>
     </div>
 
-    <!-- Título Principal de Impacto -->
+    <!-- Título Principal -->
     <h1 class="text-4xl sm:text-6xl md:text-7xl font-extrabold tracking-tight text-slate-900 leading-[1.08] max-w-4xl mx-auto">
       Medicina veterinaria de precisión en <span class="text-brand-dark">Yaruquí</span>.
     </h1>
 
-    <p class="mt-6 text-lg sm:text-xl text-slate-600 max-w-2xl mx-auto font-normal leading-relaxed">
-      Diagnóstico clínico riguroso, cirugía especializada, esquemas de vacunación y monitorización continua para la salud y longevidad de tu paciente[cite: 1].
+    <p class="mt-6 text-base sm:text-xl text-slate-600 max-w-2xl mx-auto font-normal leading-relaxed">
+      Diagnóstico por imagen avanzado, quirófano estéril, laboratorio clínico, nutrición medicada y estética especializada para la salud integral de tu mascota.
     </p>
 
-    <!-- Botones de Acción -->
-    <div class="mt-10 flex flex-wrap items-center justify-center gap-4">
+    <!-- CTAs -->
+    <div class="mt-8 flex flex-wrap items-center justify-center gap-4">
       <a href="https://wa.me/593991078623?text=Hola%20Servivett,%20necesito%20coordinar%20una%20atención" 
          target="_blank"
-         class="px-8 py-4 bg-slate-900 hover:bg-black text-white text-sm font-semibold rounded-2xl shadow-lg hover:shadow-xl active:scale-95 transition-all duration-300">
+         class="px-8 py-3.5 bg-slate-900 hover:bg-black text-white text-sm font-semibold rounded-2xl shadow-lg hover:shadow-xl active:scale-95 transition-all duration-300">
         Contactar Guardia / Citas
       </a>
       <a href="#servicios" 
-         class="px-8 py-4 bg-white hover:bg-slate-50 text-slate-800 text-sm font-semibold rounded-2xl border border-slate-200 shadow-sm hover:border-brand-border active:scale-95 transition-all duration-300">
-        Conocer Especialidades &darr;
+         class="px-8 py-3.5 bg-white hover:bg-slate-50 text-slate-800 text-sm font-semibold rounded-2xl border border-slate-200 shadow-sm hover:border-brand-border active:scale-95 transition-all duration-300">
+        Ver Servicios Clínicos &darr;
       </a>
     </div>
 
   </section>
 
-  <!-- Tarjetas de Especialidades Clínicas (Inspiración Balmesvet) -->
-  <section id="servicios" class="max-w-6xl mx-auto px-6 py-16">
-    <div class="mb-12 text-center md:text-left">
-      <span class="text-xs uppercase font-bold tracking-widest text-brand-dark">Áreas de Especialidad</span>
-      <h2 class="text-3xl font-extrabold text-slate-900 tracking-tight mt-1">Servicios Médicos Hospitalarios</h2>
+  <!-- Módulo Principal de Servicios -->
+  <section id="servicios" class="max-w-6xl mx-auto px-6 py-14">
+    
+    <div class="mb-10 text-center md:text-left">
+      <span class="text-xs uppercase font-bold tracking-widest text-brand-dark">Atención Integral</span>
+      <h2 class="text-3xl font-extrabold text-slate-900 tracking-tight mt-1">Servicios</h2>
     </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-      
-      <!-- Card 1 -->
-      <div class="group bg-white rounded-3xl p-8 border border-brand-border/80 shadow-sm hover:shadow-xl hover:border-brand transition-all duration-300 hover:-translate-y-1 flex flex-col justify-between">
-        <div>
-          <div class="w-12 h-12 rounded-2xl bg-brand-soft border border-brand-border flex items-center justify-center text-xl mb-6 group-hover:scale-110 transition-transform duration-300">
-            🩺
+    <!-- TARJETA PROTAGONISTA: RAYOS X (Especialidad distintiva de la zona) -->
+    <div class="mb-8 relative overflow-hidden rounded-3xl border-2 border-brand/50 bg-gradient-to-br from-slate-950 via-slate-900 to-teal-950 text-white p-8 md:p-12 shadow-xl shadow-brand-dark/15">
+      <div class="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+        
+        <div class="lg:col-span-8 space-y-4">
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand/20 border border-brand/40 text-brand-light text-xs font-bold uppercase tracking-wider">
+            <span>✨</span>
+            <span>Tecnología Exclusiva en la Zona</span>
           </div>
-          <h3 class="text-xl font-bold text-slate-900 mb-2">Medicina Interna & Diagnóstico</h3>
-          <p class="text-slate-600 text-sm leading-relaxed">
-            Evaluación clínica exhaustiva, control de patologías crónicas, desparasitación biosegura y programas preventivos personalizados[cite: 1].
+
+          <h3 class="text-2xl sm:text-4xl font-extrabold tracking-tight text-white leading-tight">
+            Radiología Digital & Rayos X Veterinario
+          </h3>
+
+          <p class="text-slate-300 text-sm sm:text-base leading-relaxed max-w-2xl font-normal">
+            Contamos con el equipamiento radiológico digital más avanzado de la parroquia. Diagnóstico inmediato de patologías traumatológicas, fracturas, displasias, tórax, abdomen y sospecha de cuerpos extraños con mínima radiación para tu paciente.
+          </p>
+
+          <div class="pt-2 flex flex-wrap gap-3 text-xs text-slate-300 font-medium">
+            <span class="bg-white/10 px-3 py-1.5 rounded-lg border border-white/10">• Entrega inmediata de placas</span>
+            <span class="bg-white/10 px-3 py-1.5 rounded-lg border border-white/10">• Radiología de contraste</span>
+            <span class="bg-white/10 px-3 py-1.5 rounded-lg border border-white/10">• Evaluación ortopédica</span>
+          </div>
+        </div>
+
+        <div class="lg:col-span-4 flex flex-col items-center lg:items-end justify-center">
+          <a href="https://wa.me/593991078623?text=Hola%20Servivett,%20necesito%20agendar%20un%20estudio%20de%20Rayos%20X" 
+             target="_blank"
+             class="w-full sm:w-auto text-center px-6 py-3.5 bg-brand hover:bg-brand-light text-slate-950 font-bold text-sm rounded-2xl shadow-lg transition-all duration-300 hover:scale-105 active:scale-95">
+            Solicitar Rayos X
+          </a>
+        </div>
+
+      </div>
+
+      <!-- Efecto de luz ambiental posterior -->
+      <div class="absolute -right-20 -bottom-20 w-96 h-96 bg-brand/20 rounded-full blur-3xl pointer-events-none"></div>
+    </div>
+
+    <!-- Cuadrícula de Servicios Médicos y Comerciales -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+      <!-- 1. Ecografía y Gestación -->
+      <div class="group bg-white rounded-3xl p-7 border border-brand-border/80 shadow-sm hover:shadow-xl hover:border-brand transition-all duration-300 hover:-translate-y-1 flex flex-col justify-between">
+        <div>
+          <div class="w-12 h-12 rounded-2xl bg-brand-soft border border-brand-border flex items-center justify-center text-xl mb-5 group-hover:scale-110 transition-transform duration-300">
+            📡
+          </div>
+          <h4 class="text-lg font-bold text-slate-900 mb-2">Ecografía & Planeación Gestacional</h4>
+          <p class="text-slate-600 text-xs sm:text-sm leading-relaxed">
+            Diagnóstico por ultrasonido abdominal, seguimiento gestacional riguroso, conteo embrionario y viabilidad fetal programada.
           </p>
         </div>
-        <div class="mt-8 pt-4 border-t border-slate-100 flex items-center justify-between text-xs font-semibold text-brand-dark">
-          <span>Evaluación general</span>
+        <div class="mt-6 pt-4 border-t border-slate-100 flex items-center justify-between text-xs font-semibold text-brand-dark">
+          <span>Ultrasonido clínico</span>
           <span class="group-hover:translate-x-1 transition-transform duration-200">&rarr;</span>
         </div>
       </div>
 
-      <!-- Card 2 -->
-      <div class="group bg-white rounded-3xl p-8 border border-brand-border/80 shadow-sm hover:shadow-xl hover:border-brand transition-all duration-300 hover:-translate-y-1 flex flex-col justify-between">
+      <!-- 2. Laboratorio Clínico -->
+      <div class="group bg-white rounded-3xl p-7 border border-brand-border/80 shadow-sm hover:shadow-xl hover:border-brand transition-all duration-300 hover:-translate-y-1 flex flex-col justify-between">
         <div>
-          <div class="w-12 h-12 rounded-2xl bg-brand-soft border border-brand-border flex items-center justify-center text-xl mb-6 group-hover:scale-110 transition-transform duration-300">
+          <div class="w-12 h-12 rounded-2xl bg-brand-soft border border-brand-border flex items-center justify-center text-xl mb-5 group-hover:scale-110 transition-transform duration-300">
+            🩸
+          </div>
+          <h4 class="text-lg font-bold text-slate-900 mb-2">Bioquímica & Biometría Hemática</h4>
+          <p class="text-slate-600 text-xs sm:text-sm leading-relaxed">
+            Perfiles sanguíneos integrales, frotis, química renal y hepática, electrolitos y controles prequirúrgicos de seguridad.
+          </p>
+        </div>
+        <div class="mt-6 pt-4 border-t border-slate-100 flex items-center justify-between text-xs font-semibold text-brand-dark">
+          <span>Resultados exactos</span>
+          <span class="group-hover:translate-x-1 transition-transform duration-200">&rarr;</span>
+        </div>
+      </div>
+
+      <!-- 3. Cirugías -->
+      <div class="group bg-white rounded-3xl p-7 border border-brand-border/80 shadow-sm hover:shadow-xl hover:border-brand transition-all duration-300 hover:-translate-y-1 flex flex-col justify-between">
+        <div>
+          <div class="w-12 h-12 rounded-2xl bg-brand-soft border border-brand-border flex items-center justify-center text-xl mb-5 group-hover:scale-110 transition-transform duration-300">
             🔬
           </div>
-          <h3 class="text-xl font-bold text-slate-900 mb-2">Quirófano & Cirugía General</h3>
-          <p class="text-slate-600 text-sm leading-relaxed">
-            Procedimientos en quirófano cerrado (OVH, tejidos blandos), monitoreo anestésico multiparamétrico y protocolos de analgesia avanzada[cite: 1, 4].
+          <h4 class="text-lg font-bold text-slate-900 mb-2">Quirófano & Cirugía General</h4>
+          <p class="text-slate-600 text-xs sm:text-sm leading-relaxed">
+            Intervenciones de tejidos blandos, esterilizaciones (OVH/orquiectomías), monitoreo anestésico continuo y analgesia avanzada[cite: 1, 3].
           </p>
         </div>
-        <div class="mt-8 pt-4 border-t border-slate-100 flex items-center justify-between text-xs font-semibold text-brand-dark">
-          <span>Protocolos estériles</span>
+        <div class="mt-6 pt-4 border-t border-slate-100 flex items-center justify-between text-xs font-semibold text-brand-dark">
+          <span>Área estéril</span>
           <span class="group-hover:translate-x-1 transition-transform duration-200">&rarr;</span>
         </div>
       </div>
 
-      <!-- Card 3 -->
-      <div class="group bg-white rounded-3xl p-8 border border-brand-border/80 shadow-sm hover:shadow-xl hover:border-brand transition-all duration-300 hover:-translate-y-1 flex flex-col justify-between">
+      <!-- 4. Consulta Ambulatoria y a Domicilio -->
+      <div class="group bg-white rounded-3xl p-7 border border-brand-border/80 shadow-sm hover:shadow-xl hover:border-brand transition-all duration-300 hover:-translate-y-1 flex flex-col justify-between">
         <div>
-          <div class="w-12 h-12 rounded-2xl bg-brand-soft border border-brand-border flex items-center justify-center text-xl mb-6 group-hover:scale-110 transition-transform duration-300">
-            ✂️
+          <div class="w-12 h-12 rounded-2xl bg-brand-soft border border-brand-border flex items-center justify-center text-xl mb-5 group-hover:scale-110 transition-transform duration-300">
+            🩺
           </div>
-          <h3 class="text-xl font-bold text-slate-900 mb-2">Grooming & Estética Clínica</h3>
-          <p class="text-slate-600 text-sm leading-relaxed">
-            Baños dermatológicos y terapéuticos con agua termorregulada, cortes técnicos según estándar de raza y profilaxis preventiva[cite: 1, 2].
+          <h4 class="text-lg font-bold text-slate-900 mb-2">Consulta Médica & A Domicilio</h4>
+          <p class="text-slate-600 text-xs sm:text-sm leading-relaxed">
+            Valoración clínica por sistemas en consultorio o en la tranquilidad de tu hogar para pacientes con movilidad reducida o estrés[cite: 1, 4].
           </p>
         </div>
-        <div class="mt-8 pt-4 border-t border-slate-100 flex items-center justify-between text-xs font-semibold text-brand-dark">
-          <span>Cuidado integral</span>
+        <div class="mt-6 pt-4 border-t border-slate-100 flex items-center justify-between text-xs font-semibold text-brand-dark">
+          <span>Atención personalizada</span>
+          <span class="group-hover:translate-x-1 transition-transform duration-200">&rarr;</span>
+        </div>
+      </div>
+
+      <!-- 5. Vacunación y Desparasitación -->
+      <div class="group bg-white rounded-3xl p-7 border border-brand-border/80 shadow-sm hover:shadow-xl hover:border-brand transition-all duration-300 hover:-translate-y-1 flex flex-col justify-between">
+        <div>
+          <div class="w-12 h-12 rounded-2xl bg-brand-soft border border-brand-border flex items-center justify-center text-xl mb-5 group-hover:scale-110 transition-transform duration-300">
+            💉
+          </div>
+          <h4 class="text-lg font-bold text-slate-900 mb-2">Vacunas & Desparasitaciones</h4>
+          <p class="text-slate-600 text-xs sm:text-sm leading-relaxed">
+            Inmunización oficial con cadena de frío garantizada (séxtuples, rabia, quíntuples) y desparasitaciones internas y externas[cite: 1, 2, 5].
+          </p>
+        </div>
+        <div class="mt-6 pt-4 border-t border-slate-100 flex items-center justify-between text-xs font-semibold text-brand-dark">
+          <span>Planes preventivos</span>
+          <span class="group-hover:translate-x-1 transition-transform duration-200">&rarr;</span>
+        </div>
+      </div>
+
+      <!-- 6. Farmacia Veterinaria con Receta -->
+      <div class="group bg-white rounded-3xl p-7 border border-brand-border/80 shadow-sm hover:shadow-xl hover:border-brand transition-all duration-300 hover:-translate-y-1 flex flex-col justify-between">
+        <div>
+          <div class="w-12 h-12 rounded-2xl bg-brand-soft border border-brand-border flex items-center justify-center text-xl mb-5 group-hover:scale-110 transition-transform duration-300">
+            💊
+          </div>
+          <h4 class="text-lg font-bold text-slate-900 mb-2">Farmacia Bajo Receta Médica</h4>
+          <p class="text-slate-600 text-xs sm:text-sm leading-relaxed">
+            Dispensación profesional de antibióticos, analgésicos, protectores gástricos y tratamientos específicos bajo prescripción legal[cite: 2, 3].
+          </p>
+        </div>
+        <div class="mt-6 pt-4 border-t border-slate-100 flex items-center justify-between text-xs font-semibold text-brand-dark">
+          <span>Fármacos regulados</span>
+          <span class="group-hover:translate-x-1 transition-transform duration-200">&rarr;</span>
+        </div>
+      </div>
+
+      <!-- 7. Alimento Medicado (Renal, Urinario, etc.) -->
+      <div class="group bg-white rounded-3xl p-7 border border-brand-border/80 shadow-sm hover:shadow-xl hover:border-brand transition-all duration-300 hover:-translate-y-1 flex flex-col justify-between">
+        <div>
+          <div class="w-12 h-12 rounded-2xl bg-brand-soft border border-brand-border flex items-center justify-center text-xl mb-5 group-hover:scale-110 transition-transform duration-300">
+            🥣
+          </div>
+          <h4 class="text-lg font-bold text-slate-900 mb-2">Dietas Clínicas & Comida Medicada</h4>
+          <p class="text-slate-600 text-xs sm:text-sm leading-relaxed">
+            Nutrición terapéutica certificada: fórmulas para soporte renal, tracto urinario, trastornos gastrointestinales y dermatología[cite: 2].
+          </p>
+        </div>
+        <div class="mt-6 pt-4 border-t border-slate-100 flex items-center justify-between text-xs font-semibold text-brand-dark">
+          <span>Nutrición clínica</span>
+          <span class="group-hover:translate-x-1 transition-transform duration-200">&rarr;</span>
+        </div>
+      </div>
+
+      <!-- 8. Pet Shop & Accesorios -->
+      <div class="group bg-white rounded-3xl p-7 border border-brand-border/80 shadow-sm hover:shadow-xl hover:border-brand transition-all duration-300 hover:-translate-y-1 flex flex-col justify-between">
+        <div>
+          <div class="w-12 h-12 rounded-2xl bg-brand-soft border border-brand-border flex items-center justify-center text-xl mb-5 group-hover:scale-110 transition-transform duration-300">
+            🧸
+          </div>
+          <h4 class="text-lg font-bold text-slate-900 mb-2">Pet Shop: Ropa, Juguetes & Accesorios</h4>
+          <p class="text-slate-600 text-xs sm:text-sm leading-relaxed">
+            Selección exclusiva de juguetes interactivos, arneses ergonómicos, correas seguras y prendas confortables para cada talla[cite: 2, 3].
+          </p>
+        </div>
+        <div class="mt-6 pt-4 border-t border-slate-100 flex items-center justify-between text-xs font-semibold text-brand-dark">
+          <span>Variedad de tienda</span>
+          <span class="group-hover:translate-x-1 transition-transform duration-200">&rarr;</span>
+        </div>
+      </div>
+
+      <!-- 9. Grooming & Estética -->
+      <div class="group bg-white rounded-3xl p-7 border border-brand-border/80 shadow-sm hover:shadow-xl hover:border-brand transition-all duration-300 hover:-translate-y-1 flex flex-col justify-between">
+        <div>
+          <div class="w-12 h-12 rounded-2xl bg-brand-soft border border-brand-border flex items-center justify-center text-xl mb-5 group-hover:scale-110 transition-transform duration-300">
+            ✂️
+          </div>
+          <h4 class="text-lg font-bold text-slate-900 mb-2">Corte de Pelo & Grooming Profesional</h4>
+          <p class="text-slate-600 text-xs sm:text-sm leading-relaxed">
+            Baños termorregulados, cortes estándar según la raza, limpieza ótica, corte de uñas y cosmética dermatológica segura[cite: 1, 5].
+          </p>
+        </div>
+        <div class="mt-6 pt-4 border-t border-slate-100 flex items-center justify-between text-xs font-semibold text-brand-dark">
+          <span>Estética integral</span>
           <span class="group-hover:translate-x-1 transition-transform duration-200">&rarr;</span>
         </div>
       </div>
@@ -176,9 +319,9 @@
     </div>
   </section>
 
-  <!-- Módulo de Horarios, Guardias y Urgencias (Scannable Cards) -->
-  <section id="horarios" class="max-w-6xl mx-auto px-6 py-12">
-    <div class="bg-gradient-to-br from-white to-brand-soft/40 rounded-3xl border border-brand-border p-8 md:p-12 shadow-sm">
+  <!-- Horarios y Protocolos de Guardia -->
+  <section id="horarios" class="max-w-6xl mx-auto px-6 py-10">
+    <div class="bg-gradient-to-br from-white to-brand-soft/50 rounded-3xl border border-brand-border p-8 md:p-12 shadow-sm">
       
       <div class="max-w-3xl mb-8">
         <span class="text-xs uppercase font-bold tracking-widest text-brand-dark">Régimen Hospitalario</span>
@@ -189,33 +332,30 @@
 
       <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
         
-        <!-- Bloque 1: Horario Mostrador -->
-        <div class="bg-white/80 backdrop-blur rounded-2xl p-6 border border-brand-border/60">
+        <div class="bg-white/90 backdrop-blur rounded-2xl p-6 border border-brand-border/60">
           <div class="text-xs font-bold uppercase text-slate-400 mb-1">Jornada Regular</div>
           <div class="text-xl font-extrabold text-slate-900">Lun a Sáb</div>
           <div class="text-sm font-semibold text-brand-dark mt-1">08:00 — 20:00</div>
           <p class="text-xs text-slate-500 mt-3 leading-relaxed">
-            Atención clínica directa en instalaciones, farmacia y recepción continua.
+            Atención clínica directa en instalaciones, mostrador, farmacia y pet shop continuo[cite: 1, 2].
           </p>
         </div>
 
-        <!-- Bloque 2: Domingos y Extrahorario -->
-        <div class="bg-white/80 backdrop-blur rounded-2xl p-6 border border-brand-border/60">
+        <div class="bg-white/90 backdrop-blur rounded-2xl p-6 border border-brand-border/60">
           <div class="text-xs font-bold uppercase text-slate-400 mb-1">Domingos & Extrahorario</div>
           <div class="text-xl font-extrabold text-slate-900">Previa Cita</div>
           <div class="text-sm font-semibold text-brand-dark mt-1">Aviso por WhatsApp</div>
           <p class="text-xs text-slate-500 mt-3 leading-relaxed">
-            Se atiende fuera de turno únicamente si se coordina previamente por mensaje o llamada.
+            Se atiende fuera de turno únicamente si se coordina previamente por mensaje o llamada[cite: 2].
           </p>
         </div>
 
-        <!-- Bloque 3: Urgencias 24 Horas -->
-        <div class="bg-white/80 backdrop-blur rounded-2xl p-6 border border-brand-border/60">
+        <div class="bg-white/90 backdrop-blur rounded-2xl p-6 border border-brand-border/60">
           <div class="text-xs font-bold uppercase text-slate-400 mb-1">Emergencias Nocturnas</div>
           <div class="text-xl font-extrabold text-slate-900">Guardia 24H</div>
           <div class="text-sm font-semibold text-brand-dark mt-1">Pacientes Registrados</div>
           <p class="text-xs text-slate-500 mt-3 leading-relaxed">
-            Servicio reservado exclusivamente para pacientes en base clínica con cita previa confirmada.
+            Servicio reservado exclusivamente para pacientes en base clínica con cita previa confirmada[cite: 2].
           </p>
         </div>
 
@@ -225,7 +365,7 @@
   </section>
 
   <!-- Mapa y Localización Exacta -->
-  <section id="ubicacion" class="max-w-6xl mx-auto px-6 py-12">
+  <section id="ubicacion" class="max-w-6xl mx-auto px-6 py-10">
     <div class="bg-white rounded-3xl p-6 md:p-8 border border-brand-border shadow-sm">
       <div class="flex flex-col sm:flex-row sm:items-end justify-between mb-6 gap-4">
         <div>
@@ -241,7 +381,7 @@
         </a>
       </div>
 
-      <div class="w-full h-96 rounded-2xl overflow-hidden border border-brand-border shadow-inner">
+      <div class="w-full h-80 rounded-2xl overflow-hidden border border-brand-border shadow-inner">
         <iframe 
           title="Ubicación Servivett"
           class="w-full h-full border-0" 
@@ -251,8 +391,8 @@
     </div>
   </section>
 
-  <!-- Footer Limpio y Minimalista -->
-  <footer class="border-t border-brand-border/60 bg-white mt-12 py-12">
+  <!-- Footer -->
+  <footer class="border-t border-brand-border/60 bg-white mt-12 py-10">
     <div class="max-w-6xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-6 text-xs text-slate-500">
       
       <div class="flex items-center gap-3">
@@ -269,7 +409,7 @@
     </div>
   </footer>
 
-  <!-- Lógica Dinámica de Estado en Tiempo Real -->
+  <!-- Lógica Dinámica de Turno -->
   <script>
     function checkClinicSchedule() {
       const now = new Date();
@@ -300,9 +440,6 @@
     checkClinicSchedule();
     setInterval(checkClinicSchedule, 60000);
   </script>
-
-</body>
-</html>
 
 </body>
 </html>
