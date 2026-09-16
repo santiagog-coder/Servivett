@@ -1,25 +1,33 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" class="scroll-smooth">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Servivett · Clínica Veterinaria Yaruquí</title>
   
-  <!-- Favicon para la pestaña del navegador -->
   <link rel="icon" type="image/png" href="icono%20pesta%C3%B1as.png">
+
+  <!-- Inter Font (Estilo Apple UI / Balmesvet) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
       theme: {
         extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'system-ui', '-apple-system', 'sans-serif'],
+          },
           colors: {
             brand: {
               DEFAULT: '#3e9d9b',
               dark: '#2c7270',
               light: '#5bb5b3',
-              soft: '#eaf5f5',
-              border: '#cce6e5'
+              soft: '#f2f8f8',
+              surface: '#f9fcfc',
+              border: '#d4eceb'
             }
           }
         }
@@ -27,149 +35,241 @@
     }
   </script>
 
-  <!-- Metadatos para Digital Card de WhatsApp -->
+  <!-- Open Graph -->
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://www.servivett.com">
   <meta property="og:title" content="Servivett · Clínica Veterinaria Yaruquí">
-  <meta property="og:description" content="Atención médica veterinaria, cirugías, vacunación y estética profesional en Yaruquí. WhatsApp: 099 107 8623.">
+  <meta property="og:description" content="Atención médica veterinaria, cirugías, vacunación y hospitalización en Yaruquí. WhatsApp: 099 107 8623.">
   <meta property="og:image" content="https://www.servivett.com/logo.png">
 </head>
-<body class="bg-brand-soft/50 text-slate-800 font-sans antialiased">
+<body class="bg-brand-surface text-slate-900 font-sans antialiased selection:bg-brand selection:text-white">
 
-  <!-- Cabecera con Logo Centrado -->
-  <header class="bg-brand-dark text-white sticky top-0 z-50 shadow-md">
-    <div class="max-w-5xl mx-auto px-4 py-3 flex flex-col md:flex-row items-center justify-between gap-3">
+  <!-- Header Flotante con efecto Frosted Glass (Apple Style) -->
+  <header class="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-brand-border/60 transition-all duration-300">
+    <div class="max-w-6xl mx-auto px-6 h-20 flex items-center justify-between">
       
-      <!-- Espaciador para centrado en desktop -->
-      <div class="hidden md:block w-36"></div>
+      <!-- Menú Navegación Izquierda -->
+      <nav class="hidden md:flex items-center gap-8 text-xs font-semibold tracking-wider text-slate-600 uppercase">
+        <a href="#servicios" class="hover:text-brand-dark transition-colors duration-200">Servicios</a>
+        <a href="#horarios" class="hover:text-brand-dark transition-colors duration-200">Guardia & Citas</a>
+        <a href="#ubicacion" class="hover:text-brand-dark transition-colors duration-200">Ubicación</a>
+      </nav>
 
-      <!-- Logo Centrado -->
+      <!-- Logo Centrado con Filtro Adaptativo -->
       <div class="flex flex-col items-center">
-        <img src="logo.png" alt="Servivett" class="h-10 w-auto brightness-0 invert object-contain">
-        <span class="text-[10px] text-brand-soft uppercase tracking-widest font-semibold mt-0.5">
-          Clínica Veterinaria · Yaruquí
-        </span>
+        <a href="#" class="group transition-transform duration-300 hover:scale-105">
+          <img src="logo.png" alt="Servivett Clínica Veterinaria" class="h-10 md:h-12 w-auto object-contain">
+        </a>
+        <span class="text-[9px] font-bold uppercase tracking-[0.25em] text-brand-dark">Clínica Veterinaria</span>
       </div>
 
-      <!-- Botón WhatsApp -->
-      <div class="w-auto flex justify-center md:justify-end">
+      <!-- Botón de Contacto / Urgencias -->
+      <div class="flex items-center">
         <a href="https://wa.me/593991078623?text=Hola%20Servivett,%20deseo%20hacer%20una%20consulta" 
            target="_blank" 
-           class="bg-brand hover:brightness-105 active:scale-95 text-white text-xs font-bold px-4 py-2 rounded-full shadow transition-all flex items-center gap-2 border border-white/20">
+           class="inline-flex items-center gap-2 bg-brand-dark hover:bg-brand text-white text-xs font-semibold px-5 py-2.5 rounded-full shadow-sm hover:shadow-md hover:shadow-brand/20 active:scale-95 transition-all duration-300">
           <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24">
             <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981z"/>
           </svg>
-          <span>099 107 8623</span>
+          <span>WhatsApp 099 107 8623</span>
         </a>
       </div>
 
     </div>
   </header>
 
-  <main class="max-w-4xl mx-auto px-4 py-10">
+  <!-- Hero Section Estilo Apple -->
+  <section class="max-w-5xl mx-auto px-6 pt-20 pb-16 text-center">
+    
+    <!-- Status Dinámico en Tiempo Real -->
+    <div class="inline-flex mb-8">
+      <div id="status-badge" class="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full text-xs font-semibold tracking-wide border shadow-sm transition-all duration-500">
+        <span id="status-dot" class="w-2 h-2 rounded-full"></span>
+        <span id="status-text">Comprobando disponibilidad médica...</span>
+      </div>
+    </div>
 
-    <!-- Tarjeta Principal -->
-    <section class="bg-white rounded-3xl p-6 md:p-10 border border-brand-border shadow-xl shadow-brand-dark/5 mb-10">
+    <!-- Título Principal de Impacto -->
+    <h1 class="text-4xl sm:text-6xl md:text-7xl font-extrabold tracking-tight text-slate-900 leading-[1.08] max-w-4xl mx-auto">
+      Medicina veterinaria de precisión en <span class="text-brand-dark">Yaruquí</span>.
+    </h1>
+
+    <p class="mt-6 text-lg sm:text-xl text-slate-600 max-w-2xl mx-auto font-normal leading-relaxed">
+      Diagnóstico clínico riguroso, cirugía especializada, esquemas de vacunación y monitorización continua para la salud y longevidad de tu paciente[cite: 1].
+    </p>
+
+    <!-- Botones de Acción -->
+    <div class="mt-10 flex flex-wrap items-center justify-center gap-4">
+      <a href="https://wa.me/593991078623?text=Hola%20Servivett,%20necesito%20coordinar%20una%20atención" 
+         target="_blank"
+         class="px-8 py-4 bg-slate-900 hover:bg-black text-white text-sm font-semibold rounded-2xl shadow-lg hover:shadow-xl active:scale-95 transition-all duration-300">
+        Contactar Guardia / Citas
+      </a>
+      <a href="#servicios" 
+         class="px-8 py-4 bg-white hover:bg-slate-50 text-slate-800 text-sm font-semibold rounded-2xl border border-slate-200 shadow-sm hover:border-brand-border active:scale-95 transition-all duration-300">
+        Conocer Especialidades &darr;
+      </a>
+    </div>
+
+  </section>
+
+  <!-- Tarjetas de Especialidades Clínicas (Inspiración Balmesvet) -->
+  <section id="servicios" class="max-w-6xl mx-auto px-6 py-16">
+    <div class="mb-12 text-center md:text-left">
+      <span class="text-xs uppercase font-bold tracking-widest text-brand-dark">Áreas de Especialidad</span>
+      <h2 class="text-3xl font-extrabold text-slate-900 tracking-tight mt-1">Servicios Médicos Hospitalarios</h2>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
       
-      <div class="border-b border-brand-soft pb-6">
-        <!-- Indicador de Turno en Tiempo Real -->
-        <div id="status-badge" class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold border transition-colors mb-3">
-          <span id="status-dot" class="w-2.5 h-2.5 rounded-full animate-pulse"></span>
-          <span id="status-text">Comprobando horario...</span>
-        </div>
-
-        <!-- Logotipo Oficial de la Clínica -->
-        <div class="my-3">
-          <img src="logo.png" alt="Servivett" class="h-20 md:h-28 w-auto object-contain">
-        </div>
-
-        <p class="text-slate-600 text-sm md:text-base max-w-xl mt-1">
-          Atención médica veterinaria, cirugías, esquemas de vacunación y estética profesional en Yaruquí.
-        </p>
-
-        <!-- Bloque de Horarios y Protocolos Especiales -->
-        <div class="mt-5 p-4 rounded-2xl bg-brand-soft border border-brand-border text-xs text-slate-800 space-y-1.5">
-          <p class="font-bold text-brand-dark flex items-center gap-1.5">
-            <span>ℹ️</span>
-            <span>Condiciones de atención y horarios especiales:</span>
-          </p>
-          <ul class="space-y-1 pt-1 text-slate-700">
-            <li>• <strong>Turno habitual:</strong> Lun a Sáb de 8:00 AM a 8:00 PM.</li>
-            <li>• <strong>Fuera de horario y Domingos:</strong> Únicamente previa coordinación por WhatsApp.</li>
-            <li>• <strong>Urgencias 24H:</strong> Servicio exclusivo para pacientes registrados en la clínica (bajo aviso previo).</li>
-          </ul>
-        </div>
-      </div>
-
-      <!-- Métodos de Contacto y Datos Directos -->
-      <div class="grid grid-cols-1 sm:grid-cols-3 gap-5 pt-6">
-        
-        <div class="flex items-center gap-3">
-          <div class="w-10 h-10 rounded-xl bg-brand-soft flex items-center justify-center text-brand-dark text-lg font-bold border border-brand-border">
-            📍
-          </div>
-          <div>
-            <h3 class="text-xs uppercase font-bold text-slate-400">Ubicación</h3>
-            <p class="text-sm font-semibold text-slate-800">Yaruquí, Pichincha</p>
-          </div>
-        </div>
-
-        <div class="flex items-center gap-3">
-          <div class="w-10 h-10 rounded-xl bg-brand-soft flex items-center justify-center text-brand-dark text-lg font-bold border border-brand-border">
-            📞
-          </div>
-          <div>
-            <h3 class="text-xs uppercase font-bold text-slate-400">WhatsApp / Citas</h3>
-            <a href="https://wa.me/593991078623" target="_blank" class="text-sm font-semibold text-brand-dark hover:underline">
-              099 107 8623
-            </a>
-          </div>
-        </div>
-
-        <div class="flex items-center gap-3">
-          <div class="w-10 h-10 rounded-xl bg-brand-soft flex items-center justify-center text-brand-dark text-lg font-bold border border-brand-border">
-            ⏰
-          </div>
-          <div>
-            <h3 class="text-xs uppercase font-bold text-slate-400">Horario de Mostrador</h3>
-            <p class="text-sm font-semibold text-slate-800 leading-tight">Lun - Sáb: 8:00 - 20:00</p>
-            <p class="text-[11px] text-slate-500 mt-0.5" id="dynamic-subtext">Domingos: Previa cita</p>
-          </div>
-        </div>
-
-      </div>
-    </section>
-
-    <!-- Mapa -->
-    <section class="bg-white rounded-3xl p-6 border border-brand-border shadow-sm">
-      <div class="flex justify-between items-end mb-4">
+      <!-- Card 1 -->
+      <div class="group bg-white rounded-3xl p-8 border border-brand-border/80 shadow-sm hover:shadow-xl hover:border-brand transition-all duration-300 hover:-translate-y-1 flex flex-col justify-between">
         <div>
-          <h3 class="text-lg font-bold text-slate-900">Ubicación en Yaruquí</h3>
-          <p class="text-xs text-slate-500">Punto exacto de atención clínica</p>
+          <div class="w-12 h-12 rounded-2xl bg-brand-soft border border-brand-border flex items-center justify-center text-xl mb-6 group-hover:scale-110 transition-transform duration-300">
+            🩺
+          </div>
+          <h3 class="text-xl font-bold text-slate-900 mb-2">Medicina Interna & Diagnóstico</h3>
+          <p class="text-slate-600 text-sm leading-relaxed">
+            Evaluación clínica exhaustiva, control de patologías crónicas, desparasitación biosegura y programas preventivos personalizados[cite: 1].
+          </p>
+        </div>
+        <div class="mt-8 pt-4 border-t border-slate-100 flex items-center justify-between text-xs font-semibold text-brand-dark">
+          <span>Evaluación general</span>
+          <span class="group-hover:translate-x-1 transition-transform duration-200">&rarr;</span>
+        </div>
+      </div>
+
+      <!-- Card 2 -->
+      <div class="group bg-white rounded-3xl p-8 border border-brand-border/80 shadow-sm hover:shadow-xl hover:border-brand transition-all duration-300 hover:-translate-y-1 flex flex-col justify-between">
+        <div>
+          <div class="w-12 h-12 rounded-2xl bg-brand-soft border border-brand-border flex items-center justify-center text-xl mb-6 group-hover:scale-110 transition-transform duration-300">
+            🔬
+          </div>
+          <h3 class="text-xl font-bold text-slate-900 mb-2">Quirófano & Cirugía General</h3>
+          <p class="text-slate-600 text-sm leading-relaxed">
+            Procedimientos en quirófano cerrado (OVH, tejidos blandos), monitoreo anestésico multiparamétrico y protocolos de analgesia avanzada[cite: 1, 4].
+          </p>
+        </div>
+        <div class="mt-8 pt-4 border-t border-slate-100 flex items-center justify-between text-xs font-semibold text-brand-dark">
+          <span>Protocolos estériles</span>
+          <span class="group-hover:translate-x-1 transition-transform duration-200">&rarr;</span>
+        </div>
+      </div>
+
+      <!-- Card 3 -->
+      <div class="group bg-white rounded-3xl p-8 border border-brand-border/80 shadow-sm hover:shadow-xl hover:border-brand transition-all duration-300 hover:-translate-y-1 flex flex-col justify-between">
+        <div>
+          <div class="w-12 h-12 rounded-2xl bg-brand-soft border border-brand-border flex items-center justify-center text-xl mb-6 group-hover:scale-110 transition-transform duration-300">
+            ✂️
+          </div>
+          <h3 class="text-xl font-bold text-slate-900 mb-2">Grooming & Estética Clínica</h3>
+          <p class="text-slate-600 text-sm leading-relaxed">
+            Baños dermatológicos y terapéuticos con agua termorregulada, cortes técnicos según estándar de raza y profilaxis preventiva[cite: 1, 2].
+          </p>
+        </div>
+        <div class="mt-8 pt-4 border-t border-slate-100 flex items-center justify-between text-xs font-semibold text-brand-dark">
+          <span>Cuidado integral</span>
+          <span class="group-hover:translate-x-1 transition-transform duration-200">&rarr;</span>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Módulo de Horarios, Guardias y Urgencias (Scannable Cards) -->
+  <section id="horarios" class="max-w-6xl mx-auto px-6 py-12">
+    <div class="bg-gradient-to-br from-white to-brand-soft/40 rounded-3xl border border-brand-border p-8 md:p-12 shadow-sm">
+      
+      <div class="max-w-3xl mb-8">
+        <span class="text-xs uppercase font-bold tracking-widest text-brand-dark">Régimen Hospitalario</span>
+        <h2 class="text-2xl md:text-3xl font-extrabold text-slate-900 tracking-tight mt-1">
+          Horarios de Consulta y Protocolos de Guardia
+        </h2>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        
+        <!-- Bloque 1: Horario Mostrador -->
+        <div class="bg-white/80 backdrop-blur rounded-2xl p-6 border border-brand-border/60">
+          <div class="text-xs font-bold uppercase text-slate-400 mb-1">Jornada Regular</div>
+          <div class="text-xl font-extrabold text-slate-900">Lun a Sáb</div>
+          <div class="text-sm font-semibold text-brand-dark mt-1">08:00 — 20:00</div>
+          <p class="text-xs text-slate-500 mt-3 leading-relaxed">
+            Atención clínica directa en instalaciones, farmacia y recepción continua.
+          </p>
+        </div>
+
+        <!-- Bloque 2: Domingos y Extrahorario -->
+        <div class="bg-white/80 backdrop-blur rounded-2xl p-6 border border-brand-border/60">
+          <div class="text-xs font-bold uppercase text-slate-400 mb-1">Domingos & Extrahorario</div>
+          <div class="text-xl font-extrabold text-slate-900">Previa Cita</div>
+          <div class="text-sm font-semibold text-brand-dark mt-1">Aviso por WhatsApp</div>
+          <p class="text-xs text-slate-500 mt-3 leading-relaxed">
+            Se atiende fuera de turno únicamente si se coordina previamente por mensaje o llamada.
+          </p>
+        </div>
+
+        <!-- Bloque 3: Urgencias 24 Horas -->
+        <div class="bg-white/80 backdrop-blur rounded-2xl p-6 border border-brand-border/60">
+          <div class="text-xs font-bold uppercase text-slate-400 mb-1">Emergencias Nocturnas</div>
+          <div class="text-xl font-extrabold text-slate-900">Guardia 24H</div>
+          <div class="text-sm font-semibold text-brand-dark mt-1">Pacientes Registrados</div>
+          <p class="text-xs text-slate-500 mt-3 leading-relaxed">
+            Servicio reservado exclusivamente para pacientes en base clínica con cita previa confirmada.
+          </p>
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Mapa y Localización Exacta -->
+  <section id="ubicacion" class="max-w-6xl mx-auto px-6 py-12">
+    <div class="bg-white rounded-3xl p-6 md:p-8 border border-brand-border shadow-sm">
+      <div class="flex flex-col sm:flex-row sm:items-end justify-between mb-6 gap-4">
+        <div>
+          <span class="text-xs uppercase font-bold tracking-widest text-brand-dark">Instalaciones</span>
+          <h2 class="text-2xl font-extrabold text-slate-900 tracking-tight mt-1">Ubicación en Yaruquí</h2>
+          <p class="text-xs text-slate-500 mt-1">Coordenadas: 0°09'36.3"S 78°19'17.1"W (-0.160083, -78.321417)</p>
         </div>
         <a href="https://www.google.com/maps/search/?api=1&query=-0.160083,-78.321417" 
            target="_blank" 
-           class="text-xs font-semibold text-brand-dark hover:brightness-75 underline flex items-center gap-1">
-          <span>Abrir en Google Maps</span>
+           class="inline-flex items-center gap-2 text-xs font-bold text-brand-dark hover:text-brand transition-colors">
+          <span>Abrir navegación en Google Maps</span>
           <span>&rarr;</span>
         </a>
       </div>
 
-      <div class="w-full h-80 rounded-2xl overflow-hidden border border-brand-border shadow-inner">
+      <div class="w-full h-96 rounded-2xl overflow-hidden border border-brand-border shadow-inner">
         <iframe 
           title="Ubicación Servivett"
           class="w-full h-full border-0" 
           src="https://www.openstreetmap.org/export/embed.html?bbox=-78.326417%2C-0.165083%2C-78.316417%2C-0.155083&amp;layer=mapnik&amp;marker=-0.160083%2C-78.321417">
         </iframe>
       </div>
-    </section>
+    </div>
+  </section>
 
-  </main>
+  <!-- Footer Limpio y Minimalista -->
+  <footer class="border-t border-brand-border/60 bg-white mt-12 py-12">
+    <div class="max-w-6xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-6 text-xs text-slate-500">
+      
+      <div class="flex items-center gap-3">
+        <img src="logo.png" alt="Servivett" class="h-6 w-auto object-contain">
+        <span>© 2026 Clínica Veterinaria Servivett. Yaruquí, Pichincha, Ecuador.</span>
+      </div>
 
-  <footer class="text-center py-6 text-xs text-slate-400 border-t border-brand-border mt-8">
-    © 2026 Clínica Veterinaria Servivett. Yaruquí, Pichincha, Ecuador.
+      <div class="flex items-center gap-6">
+        <a href="https://wa.me/593991078623" target="_blank" class="hover:text-brand-dark transition-colors">WhatsApp Directo</a>
+        <a href="#horarios" class="hover:text-brand-dark transition-colors">Protocolo de Guardia</a>
+        <a href="#ubicacion" class="hover:text-brand-dark transition-colors">Dirección</a>
+      </div>
+
+    </div>
   </footer>
 
+  <!-- Lógica Dinámica de Estado en Tiempo Real -->
   <script>
     function checkClinicSchedule() {
       const now = new Date();
@@ -179,25 +279,21 @@
       const badge = document.getElementById('status-badge');
       const dot = document.getElementById('status-dot');
       const text = document.getElementById('status-text');
-      const subtext = document.getElementById('dynamic-subtext');
 
       const isRegularHours = (day >= 1 && day <= 6) && (hour >= 8 && hour < 20);
 
       if (isRegularHours) {
-        badge.className = "inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200 mb-3";
+        badge.className = "inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-800 border border-emerald-200/80 shadow-sm";
         dot.className = "w-2 h-2 rounded-full bg-emerald-500 animate-pulse";
-        text.textContent = "Abierto ahora · Horario habitual";
-        subtext.textContent = "Atención regular hasta las 8:00 PM";
+        text.textContent = "Abierto ahora · Horario habitual de clínica (hasta 20:00)";
       } else if (day === 0) {
-        badge.className = "inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold bg-sky-50 text-sky-700 border border-sky-200 mb-3";
+        badge.className = "inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full text-xs font-semibold bg-sky-50 text-sky-800 border border-sky-200/80 shadow-sm";
         dot.className = "w-2 h-2 rounded-full bg-sky-500";
-        text.textContent = "Domingo · Atención bajo cita previa";
-        subtext.textContent = "Escríbenos por WhatsApp";
+        text.textContent = "Domingo · Atención médica bajo cita previa";
       } else {
-        badge.className = "inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold bg-amber-50 text-amber-700 border border-amber-200 mb-3";
+        badge.className = "inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full text-xs font-semibold bg-amber-50 text-amber-900 border border-amber-200/80 shadow-sm";
         dot.className = "w-2 h-2 rounded-full bg-amber-500";
         text.textContent = "Fuera de turno regular · Avisar antes de acudir";
-        subtext.textContent = "Atención bajo coordinación por WhatsApp";
       }
     }
 
