@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Perfil y Emergencia | Servivett</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <style>
+    :root {
+      --primary: #008080;
+      --primary-dark: #006666;
+      --bg: #f8fafc;
+      --card-bg: #ffffff;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --border: #e2e8f0;
+      --green: #16a34a;
+      --green-bg: #dcfce7;
+      --red: #dc2626;
+      --red-bg: #fee2e2;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text-main);
+      display: flex;
+      justify-content: center;
+      padding: 16px;
+      min-height: 100vh;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 440px;
+      margin: auto;
+    }
+
+    .card {
+      background: var(--card-bg);
+      border-radius: 20px;
+      border: 1px solid var(--border);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .header-bar {
+      background: var(--primary);
+      padding: 18px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      color: white;
+    }
+
+    .header-bar img {
+      height: 28px;
+      filter: brightness(0) invert(1);
+    }
+
+    .status-badge {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.2);
+    }
+
+    .avatar-wrapper {
+      position: relative;
+      width: 100%;
+      height: 220px;
+      background: #e2e8f0;
+    }
+
+    .avatar-wrapper img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .content {
+      padding: 24px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    .pet-identity {
+      text-align: center;
+    }
+
+    .pet-name {
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    .pet-breed {
+      font-size: 14px;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    .info-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      background: #f1f5f9;
+      padding: 14px;
+      border-radius: 12px;
+    }
+
+    .info-item {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .info-label {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+    }
+
+    .info-value {
+      font-size: 13.5px;
+      font-weight: 600;
+      color: var(--text-main);
+      margin-top: 2px;
+    }
+
+    .badge-vacunas {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      padding: 8px 12px;
+      border-radius: 10px;
+      background: var(--green-bg);
+      color: var(--green);
+    }
+
+    .alert-box {
+      border-left: 4px solid var(--primary);
+      background: #f0fdfa;
+      padding: 10px 14px;
+      border-radius: 0 8px 8px 0;
+      font-size: 13px;
+      color: var(--text-main);
+    }
+
+    .actions {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 6px;
+    }
+
+    .btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 14px;
+      border-radius: 12px;
+      font-size: 14px;
+      font-weight: 600;
+      text-decoration: none;
+      transition: opacity 0.2s;
+    }
+
+    .btn:active {
+      opacity: 0.85;
+    }
+
+    .btn-call {
+      background: var(--primary);
+      color: white;
+    }
+
+    .btn-clinic {
+      background: #e2e8f0;
+      color: var(--text-main);
+    }
+
+    .footer {
+      text-align: center;
+      font-size: 11px;
+      color: var(--text-muted);
+      padding: 16px;
+      border-top: 1px solid var(--border);
+    }
+
+    .loader {
+      text-align: center;
+      padding: 60px 20px;
+      font-size: 14px;
+      color: var(--text-muted);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <div class="card" id="card-box">
+      <div class="loader" id="loading-state">Cargando expediente médico...</div>
+    </div>
+  </div>
+
+  <script>
+    const SUPABASE_URL = "https://llwbvbzrbdxlrhswgjft.supabase.co";
+    const SUPABASE_ANON_KEY = "sb_publishable_1k62mMMn9VzV_IT1tf2M-g_NDAeLMZX";
+    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    function calcularEdad(fechaNacStr) {
+      if (!fechaNacStr) return "No registrada";
+      const nac = new Date(fechaNacStr);
+      const hoy = new Date();
+      
+      let anios = hoy.getFullYear() - nac.getFullYear();
+      let meses = hoy.getMonth() - nac.getMonth();
+      let dias = hoy.getDate() - nac.getDate();
+
+      if (dias < 0) {
+        meses--;
+        const ultimoDiaMesAnterior = new Date(hoy.getFullYear(), hoy.getMonth(), 0).getDate();
+        dias += ultimoDiaMesAnterior;
+      }
+      if (meses < 0) {
+        anios--;
+        meses += 12;
+      }
+
+      if (anios > 0) return `${anios} a, ${meses} m`;
+      if (meses > 0) return `${meses} m, ${dias} d`;
+      return `${dias} días`;
+    }
+
+    async function cargarPerfil() {
+      const card = document.getElementById("card-box");
+      const urlParams = new URLSearchParams(window.location.search);
+      const tokenId = urlParams.get("id");
+
+      if (!tokenId) {
+        card.innerHTML = `<div class="loader">Identificador de mascota no proporcionado.</div>`;
+        return;
+      }
+
+      const { data: paciente, error } = await supabaseClient
+        .from("pacientes")
+        .select(`
+          *,
+          tutores ( nombres, telefono )
+        `)
+        .eq("token_publico", tokenId)
+        .single();
+
+      if (error || !paciente) {
+        card.innerHTML = `<div class="loader">Expediente no encontrado o código inactivo.</div>`;
+        return;
+      }
+
+      const tutor = paciente.tutores || {};
+      const edadTexto = calcularEdad(paciente.fecha_nacimiento);
+      const fotoUrl = paciente.foto_archivo 
+        ? `https://www.servivett.com/img/pacientes/${paciente.foto_archivo}`
+        : "https://www.servivett.com/logo.png";
+
+      card.innerHTML = `
+        <div class="header-bar">
+          <img src="https://www.servivett.com/logo.png" alt="Servivett">
+          <span class="status-badge">${paciente.estado_vital}</span>
+        </div>
+
+        <div class="avatar-wrapper">
+          <img src="${fotoUrl}" alt="${paciente.nombre}" onerror="this.src='https://www.servivett.com/logo.png'">
+        </div>
+
+        <div class="content">
+          <div class="pet-identity">
+            <h1 class="pet-name">${paciente.nombre}</h1>
+            <p class="pet-breed">${paciente.especie} · ${paciente.raza} (${paciente.color_manto || 'Manto regular'})</p>
+          </div>
+
+          <div class="badge-vacunas">
+            <span style="font-size: 8px;">●</span>
+            Plan Vacunal Vigente en Servivett
+          </div>
+
+          <div class="info-grid">
+            <div class="info-item">
+              <span class="info-label">Edad Exacta</span>
+              <span class="info-value">${edadTexto}</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Sexo / Estado</span>
+              <span class="info-value">${paciente.sexo} ${paciente.castrado ? '(Castrado)' : '(Entero)'}</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">ID Clínico</span>
+              <span class="info-value">${paciente.uid_clinico}</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Microchip</span>
+              <span class="info-value">${paciente.microchip || 'No registrado'}</span>
+            </div>
+          </div>
+
+          <div class="alert-box">
+            <strong>Observaciones:</strong><br>
+            ${paciente.notas_medicas || 'Sin notas clínicas registradas.'}
+          </div>
+
+          <div class="actions">
+            <a href="tel:${tutor.telefono || '+593991078623'}" class="btn btn-call">
+              📞 Llamar al Tutor (${tutor.nombres ? tutor.nombres.split(' ')[0] : 'Responsable'})
+            </a>
+            <a href="https://wa.me/593991078623?text=Hola%2C%20tengo%20informaci%C3%B3n%20sobre%20el%20paciente%20${encodeURIComponent(paciente.nombre)}%20(${paciente.uid_clinico})" class="btn btn-clinic" target="_blank">
+              💬 Notificar a Clínica Servivett
+            </a>
+          </div>
+        </div>
+
+        <footer class="footer">
+          Servivett Atención Veterinaria · Yaruquí, Quito<br>
+          Identificación de emergencia vinculada a expediente clínico digital.
+        </footer>
+      `;
+    }
+
+    cargarPerfil();
+  </script>
+</body>
+</html>
