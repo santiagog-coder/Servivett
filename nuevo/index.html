@@ -2,6 +2,29 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
+  <script>
+    // GUARDIÁN DE RUTA PRIVADA
+    (function() {
+      const rawSession = localStorage.getItem("svt_auth_session");
+      let autenticado = false;
+
+      if (rawSession) {
+        try {
+          const session = JSON.parse(rawSession);
+          if (session.user && session.loggedAt) {
+            autenticado = true;
+          }
+        } catch(e) {}
+      }
+
+      if (!autenticado) {
+        // Redirige al login y guarda la página a la que quería entrar
+        const currentPath = encodeURIComponent(window.location.pathname + window.location.search);
+        window.location.replace("/login/?redirect=" + currentPath);
+      }
+    })();
+  </script>
+  <!-- Resto de tus fuentes, estilos y scripts de admisión -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Admisión Clínica y GeoID — Servivett</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
