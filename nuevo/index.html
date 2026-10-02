@@ -23,23 +23,25 @@
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; }
     body { background: var(--bg); color: var(--text); padding: 24px 16px; display: flex; justify-content: center; }
     
-    .panel { width: 100%; max-width: 520px; background: var(--card); border-radius: 24px; padding: 24px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); }
+    .panel { width: 100%; max-width: 540px; background: var(--card); border-radius: 24px; padding: 26px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); }
     .header { margin-bottom: 20px; }
-    .header h1 { font-size: 1.3rem; font-weight: 800; color: var(--primary); }
+    .header h1 { font-size: 1.35rem; font-weight: 800; color: var(--primary); }
     .header p { font-size: 0.85rem; color: var(--muted); margin-top: 2px; }
 
-    .section-title { font-size: 0.75rem; text-transform: uppercase; font-weight: 700; color: var(--muted); letter-spacing: 0.5px; margin: 16px 0 8px; }
+    .section-title { font-size: 0.75rem; text-transform: uppercase; font-weight: 700; color: var(--muted); letter-spacing: 0.5px; margin: 18px 0 8px; border-bottom: 1px solid #f1f5f9; padding-bottom: 4px; }
 
     .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .grid-doc { display: grid; grid-template-columns: 110px 1fr; gap: 8px; }
+    .grid-phone { display: grid; grid-template-columns: 140px 1fr; gap: 8px; }
+
     .form-group { margin-bottom: 12px; }
     label { display: block; font-size: 0.8rem; font-weight: 600; color: var(--text); margin-bottom: 4px; }
     input, select { width: 100%; padding: 11px 12px; border: 1.5px solid var(--border); border-radius: 12px; font-size: 0.9rem; outline: none; transition: 0.2s; background: #fff; }
     input:focus, select:focus { border-color: var(--primary); }
 
-    .btn-submit { width: 100%; background: var(--primary); color: white; padding: 14px; border: none; border-radius: 14px; font-weight: 700; font-size: 0.95rem; cursor: pointer; margin-top: 14px; transition: 0.2s; }
+    .btn-submit { width: 100%; background: var(--primary); color: white; padding: 14px; border: none; border-radius: 14px; font-weight: 700; font-size: 0.95rem; cursor: pointer; margin-top: 16px; transition: 0.2s; }
     .btn-submit:hover { background: var(--primary-dark); }
 
-    /* Resultado emergente */
     .result-card { display: none; margin-top: 20px; padding: 20px; background: #f0fdf4; border: 1.5px solid #86efac; border-radius: 18px; text-align: center; }
     .result-card h3 { color: #166534; font-size: 1.1rem; margin-bottom: 6px; }
     .qr-img { width: 180px; height: 180px; margin: 14px auto; display: block; background: #fff; padding: 8px; border-radius: 12px; border: 1px solid #bbf7d0; }
@@ -50,43 +52,81 @@
 
   <div class="panel">
     <div class="header">
-      <h1>Registro Rápido de Paciente</h1>
-      <p>Generación instantánea de Ficha GeoID y Código QR</p>
+      <h1>Admisión de Paciente & GeoID</h1>
+      <p>Servivett Gestión Clínica</p>
     </div>
 
     <form id="registro-form" onsubmit="guardarRegistro(event)">
       <div class="section-title">Datos del Tutor</div>
+      
       <div class="form-group">
-        <label>Nombre Completo</label>
+        <label>Nombre y Apellidos</label>
         <input type="text" id="tutor_nombre" placeholder="Ej. Juan Pérez" required>
       </div>
 
-      <div class="grid-2">
-        <div class="form-group">
-          <label>Cédula / RUC</label>
-          <input type="text" id="tutor_cedula" placeholder="17XXXXXXXX" required>
-        </div>
-        <div class="form-group">
-          <label>Celular (WhatsApp)</label>
-          <input type="tel" id="tutor_telefono" placeholder="099XXXXXXX" required>
+      <div class="form-group">
+        <label>Documento de Identidad</label>
+        <div class="grid-doc">
+          <select id="tutor_tipo_doc">
+            <option value="Cédula">Cédula</option>
+            <option value="RUC">RUC</option>
+            <option value="Pasaporte">Pasaporte</option>
+          </select>
+          <input type="text" id="tutor_cedula" placeholder="Número de documento" required>
         </div>
       </div>
 
-      <div class="section-title">Datos del Paciente</div>
       <div class="form-group">
-        <label>Nombre de la Mascota</label>
+        <label>Teléfono de Contacto (WhatsApp)</label>
+        <div class="grid-phone">
+          <select id="prefijo_pais">
+            <option value="+593" selected>🇪🇨 +593 (EC)</option>
+            <option value="+57">🇨🇴 +57 (CO)</option>
+            <option value="+51">🇵🇪 +51 (PE)</option>
+            <option value="+1">🇺🇸 +1 (US)</option>
+            <option value="+34">🇪🇸 +34 (ES)</option>
+            <option value="+54">🇦🇷 +54 (AR)</option>
+            <option value="+56">🇨🇱 +56 (CL)</option>
+            <option value="+52">🇲🇽 +52 (MX)</option>
+          </select>
+          <input type="tel" id="tutor_telefono" placeholder="0991234567" required>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Dirección Domiciliaria</label>
+        <input type="text" id="tutor_direccion" placeholder="Barrio, calle principal y secundaria" required>
+      </div>
+
+      <div class="section-title">Datos del Paciente</div>
+      
+      <div class="form-group">
+        <label>Nombre del Paciente</label>
         <input type="text" id="paciente_nombre" placeholder="Ej. Pelusa" required>
       </div>
 
       <div class="grid-2">
         <div class="form-group">
           <label>Especie</label>
-          <select id="paciente_especie">
-            <option value="Canino">Canino</option>
+          <select id="paciente_especie" onchange="actualizarRazas()">
+            <option value="Canino" selected>Canino</option>
             <option value="Felino">Felino</option>
-            <option value="Otro">Otro</option>
+            <option value="Equino">Equino</option>
+            <option value="Bovino">Bovino</option>
+            <option value="Porcino">Porcino</option>
+            <option value="Cunícola">Cunícola</option>
+            <option value="Roedor">Roedor</option>
           </select>
         </div>
+        <div class="form-group">
+          <label>Raza</label>
+          <select id="paciente_raza">
+            <!-- Dinámico vía JS -->
+          </select>
+        </div>
+      </div>
+
+      <div class="grid-2">
         <div class="form-group">
           <label>Sexo</label>
           <select id="paciente_sexo">
@@ -94,20 +134,13 @@
             <option value="Hembra">Hembra</option>
           </select>
         </div>
-      </div>
-
-      <div class="grid-2">
-        <div class="form-group">
-          <label>Raza</label>
-          <input type="text" id="paciente_raza" value="Mestizo">
-        </div>
         <div class="form-group">
           <label>Fecha de Nacimiento</label>
           <input type="date" id="paciente_nacimiento" required>
         </div>
       </div>
 
-      <button type="submit" class="btn-submit" id="btn-guardar">Guardar y Generar QR</button>
+      <button type="submit" class="btn-submit" id="btn-guardar">Registrar y Generar GeoID</button>
     </form>
 
     <div class="result-card" id="resultado">
@@ -125,6 +158,46 @@
   </div>
 
   <script>
+    const CATALOGO_RAZAS = {
+      Canino: [
+        "Mestizo", "Shih Tzu", "Poodle", "Schnauzer", "Golden Retriever",
+        "Labrador Retriever", "Pastor Alemán", "Bulldog Francés", "Chihuahua",
+        "Pug", "Yorkshire Terrier", "Beagle", "Rottweiler", "Husky Siberiano",
+        "Pitbull Terrier", "Dóberman", "Boxer", "Gran Danés", "Dachshund"
+      ],
+      Felino: [
+        "Mestizo / Común Europeo", "Siamés", "Persa", "Maine Coon", "Bengala",
+        "Ragdoll", "British Shorthair", "Sphynx", "Angora Turco", "Azul Ruso"
+      ],
+      Equino: [
+        "Mestizo / Criollo", "Pura Sangre Inglés", "Cuarto de Milla", "Paso Fino",
+        "Árabe", "Español / Andaluz", "Appaloosa", "Frisón", "Percherón"
+      ],
+      Bovino: [
+        "Mestizo / Criollo", "Holstein Friesian", "Jersey", "Brown Swiss",
+        "Gyr", "Brahman", "Angus", "Simmental", "Charolais"
+      ],
+      Porcino: ["Mestizo"],
+      Cunícola: ["Mestizo"],
+      Roedor: ["Mestizo"]
+    };
+
+    function actualizarRazas() {
+      const especie = document.getElementById("paciente_especie").value;
+      const selectRaza = document.getElementById("paciente_raza");
+      selectRaza.innerHTML = "";
+
+      const razas = CATALOGO_RAZAS[especie] || ["Mestizo"];
+      razas.forEach(raza => {
+        const opt = document.createElement("option");
+        opt.value = raza;
+        opt.textContent = raza;
+        selectRaza.appendChild(opt);
+      });
+    }
+
+    actualizarRazas();
+
     const SUPABASE_URL = "https://llwbvbzrbdxlrhswgjft.supabase.co";
     const SUPABASE_KEY = "sb_publishable_1k62mMMn9VzV_IT1tf2M-g_NDAeLMZX";
     const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
@@ -136,30 +209,38 @@
       btn.textContent = "Procesando...";
 
       const tutorNombre = document.getElementById("tutor_nombre").value.trim();
-      const tutorCedula = document.getElementById("tutor_cedula").value.trim();
-      let tutorTel = document.getElementById("tutor_telefono").value.trim();
+      const tutorTipoDoc = document.getElementById("tutor_tipo_doc").value;
+      const tutorDoc = document.getElementById("tutor_cedula").value.trim();
+      const prefijo = document.getElementById("prefijo_pais").value;
+      let rawTel = document.getElementById("tutor_telefono").value.trim().replace(/\D/g, "");
       
+      if (prefijo === "+593" && rawTel.startsWith("0")) {
+        rawTel = rawTel.substring(1);
+      }
+      const telefonoCompleto = prefijo + rawTel;
+      const tutorDireccion = document.getElementById("tutor_direccion").value.trim();
+
       const pacNombre = document.getElementById("paciente_nombre").value.trim();
       const pacEspecie = document.getElementById("paciente_especie").value;
+      const pacRaza = document.getElementById("paciente_raza").value;
       const pacSexo = document.getElementById("paciente_sexo").value;
-      const pacRaza = document.getElementById("paciente_raza").value.trim();
       const pacNac = document.getElementById("paciente_nacimiento").value;
 
       try {
-        // 1. Guardar o actualizar tutor por cédula
         const { data: tutor, error: errTutor } = await supabaseClient
           .from("tutores")
           .upsert({
             nombres: tutorNombre,
-            cedula_ruc: tutorCedula,
-            telefono: tutorTel
+            cedula_ruc: tutorDoc,
+            telefono: telefonoCompleto,
+            direccion: tutorDireccion,
+            tipo_documento: tutorTipoDoc
           }, { onConflict: "cedula_ruc" })
           .select()
           .single();
 
         if (errTutor) throw errTutor;
 
-        // 2. Insertar paciente
         const uidGenerado = "SVT-" + Math.floor(1000 + Math.random() * 9000);
         const { data: pac, error: errPac } = await supabaseClient
           .from("pacientes")
@@ -178,30 +259,30 @@
 
         if (errPac) throw errPac;
 
-        // 3. Generar enlace y QR dinámico
         const urlFicha = `https://www.servivett.com/p/?id=${pac.token_publico}`;
         const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=400x400&ecc=H&margin=2&data=${encodeURIComponent(urlFicha)}`;
 
         document.getElementById("res-nombre").textContent = `${pac.nombre} (${pac.uid_clinico})`;
         document.getElementById("qr-preview").src = qrUrl;
-        
+
         const linkDir = document.getElementById("link-directo");
         linkDir.href = urlFicha;
         linkDir.textContent = urlFicha;
 
-        // Formato de teléfono para WhatsApp (+593)
-        let fonoWa = tutorTel.startsWith("0") ? "593" + tutorTel.substring(1) : tutorTel;
-        const mensajeWa = encodeURIComponent(`Hola ${tutorNombre.split(' ')[0]}, el carné digital y GeoID de ${pacNombre} ya está activo en Clínica Servivett:\n\n${urlFicha}`);
+        const fonoWa = telefonoCompleto.replace("+", "");
+        const primerNombreTutor = tutorNombre.split(" ")[0];
+        const mensajeWa = encodeURIComponent(`Hola ${primerNombreTutor}, el carné digital y GeoID de ${pacNombre} ya está activo en Clínica Servivett:\n\n${urlFicha}`);
         document.getElementById("btn-enviar-wa").href = `https://wa.me/${fonoWa}?text=${mensajeWa}`;
 
         document.getElementById("resultado").style.display = "block";
         document.getElementById("registro-form").reset();
+        actualizarRazas();
 
       } catch (err) {
-        alert("Ocurrió un error al guardar: " + err.message);
+        alert("Error al registrar: " + err.message);
       } finally {
         btn.disabled = false;
-        btn.textContent = "Guardar y Generar QR";
+        btn.textContent = "Registrar y Generar GeoID";
       }
     }
   </script>
