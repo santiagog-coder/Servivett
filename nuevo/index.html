@@ -39,6 +39,18 @@
     input, select { width: 100%; padding: 11px 12px; border: 1.5px solid var(--border); border-radius: 12px; font-size: 0.9rem; outline: none; transition: 0.2s; background: #fff; }
     input:focus, select:focus { border-color: var(--primary); }
 
+    .badge-status {
+      display: none;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: #047857;
+      background: #ecfdf5;
+      border: 1px solid #a7f3d0;
+      padding: 6px 10px;
+      border-radius: 8px;
+      margin-top: 6px;
+    }
+
     .btn-submit { width: 100%; background: var(--primary); color: white; padding: 14px; border: none; border-radius: 14px; font-weight: 700; font-size: 0.95rem; cursor: pointer; margin-top: 16px; transition: 0.2s; }
     .btn-submit:hover { background: var(--primary-dark); }
 
@@ -59,21 +71,25 @@
     <form id="registro-form" onsubmit="guardarRegistro(event)">
       <div class="section-title">Datos del Tutor</div>
       
+      <!-- CÉDULA / DOCUMENTO PRIMERO -->
       <div class="form-group">
-        <label>Nombre y Apellidos</label>
-        <input type="text" id="tutor_nombre" placeholder="Ej. Juan Pérez" required>
-      </div>
-
-      <div class="form-group">
-        <label>Documento de Identidad</label>
+        <label>Documento de Identidad (Cédula / RUC / Pasaporte)</label>
         <div class="grid-doc">
           <select id="tutor_tipo_doc">
             <option value="Cédula">Cédula</option>
             <option value="RUC">RUC</option>
             <option value="Pasaporte">Pasaporte</option>
           </select>
-          <input type="text" id="tutor_cedula" placeholder="Número de documento" required>
+          <input type="text" id="tutor_cedula" placeholder="Número de documento" required autocomplete="off">
         </div>
+        <div id="tutor-status-badge" class="badge-status">
+          ✓ Tutor registrado encontrado. Datos cargados automáticamente.
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Nombre y Apellidos</label>
+        <input type="text" id="tutor_nombre" placeholder="Ej. Juan Pérez" required>
       </div>
 
       <div class="form-group">
@@ -95,7 +111,7 @@
 
       <div class="form-group">
         <label>Dirección Domiciliaria</label>
-        <input type="text" id="tutor_direccion" placeholder="Barrio, calle principal y secundaria" required>
+        <input type="text" id="tutor_direccion" placeholder="Sector, calle principal y secundaria" required>
       </div>
 
       <div class="section-title">Datos del Paciente</div>
@@ -202,6 +218,58 @@
     const SUPABASE_KEY = "sb_publishable_1k62mMMn9VzV_IT1tf2M-g_NDAeLMZX";
     const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
+    // Variable global para reutilizar si el tutor ya existe
+    let tutorExistenteId = null;
+
+    // AUTOCOMPLETADO AL ESCRIBIR CÉDULA
+    const inputCedula = document.getElementById("tutor_cedula");
+    inputCedula.addEventListener("blur", async () => {
+      const doc = inputCedula.value.trim();
+      const badge = document.getElementById("tutor-status-badge");
+
+      if (doc.length < 5) {
+        badge.style.display = "none";
+        tutorExistenteId = null;
+        return;
+      }
+
+      try {
+        const { data: tutor, error } = await supabaseClient
+          .from("tutores")
+          .select("id, nombres, telefono, direccion, tipo_documento")
+          .eq("cedula_ruc", doc)
+          .maybeSingle();
+
+        if (tutor) {
+          tutorExistenteId = tutor.id;
+          document.getElementById("tutor_nombre").value = tutor.nombres;
+          document.getElementById("tutor_direccion").value = tutor.direccion || "";
+
+          // Ajustar prefijo y teléfono
+          if (tutor.telefono) {
+            let tel = tutor.telefono;
+            if (tel.startsWith("+593")) {
+              document.getElementById("prefijo_pais").value = "+593";
+              document.getElementById("tutor_telefono").value = "0" + tel.substring(4);
+            } else {
+              document.getElementById("tutor_telefono").value = tel;
+            }
+          }
+
+          if (tutor.tipo_documento) {
+            document.getElementById("tutor_tipo_doc").value = tutor.tipo_documento;
+          }
+
+          badge.style.display = "block";
+        } else {
+          tutorExistenteId = null;
+          badge.style.display = "none";
+        }
+      } catch (err) {
+        console.warn("Búsqueda de tutor:", err);
+      }
+    });
+
     async function guardarRegistro(e) {
       e.preventDefault();
       const btn = document.getElementById("btn-guardar");
@@ -227,25 +295,55 @@
       const pacNac = document.getElementById("paciente_nacimiento").value;
 
       try {
-        const { data: tutor, error: errTutor } = await supabaseClient
-          .from("tutores")
-          .upsert({
-            nombres: tutorNombre,
-            cedula_ruc: tutorDoc,
-            telefono: telefonoCompleto,
-            direccion: tutorDireccion,
-            tipo_documento: tutorTipoDoc
-          }, { onConflict: "cedula_ruc" })
-          .select()
-          .single();
+        let finalTutorId = tutorExistenteId;
 
-        if (errTutor) throw errTutor;
+        // 1. Si no teníamos el tutor precargado, comprobamos si ya existe por si acaso
+        if (!finalTutorId) {
+          const { data: existente } = await supabaseClient
+            .from("tutores")
+            .select("id")
+            .eq("cedula_ruc", tutorDoc)
+            .maybeSingle();
 
+          if (existente) {
+            finalTutorId = existente.id;
+          }
+        }
+
+        // 2. Si ya existe, actualizamos sus datos de contacto; si no, lo creamos
+        if (finalTutorId) {
+          await supabaseClient
+            .from("tutores")
+            .update({
+              nombres: tutorNombre,
+              telefono: telefonoCompleto,
+              direccion: tutorDireccion,
+              tipo_documento: tutorTipoDoc
+            })
+            .eq("id", finalTutorId);
+        } else {
+          const { data: nuevoTutor, error: errTutor } = await supabaseClient
+            .from("tutores")
+            .insert([{
+              nombres: tutorNombre,
+              cedula_ruc: tutorDoc,
+              telefono: telefonoCompleto,
+              direccion: tutorDireccion,
+              tipo_documento: tutorTipoDoc
+            }])
+            .select("id")
+            .single();
+
+          if (errTutor) throw errTutor;
+          finalTutorId = nuevoTutor.id;
+        }
+
+        // 3. Insertar la nueva mascota vinculada al ID del tutor
         const uidGenerado = "SVT-" + Math.floor(1000 + Math.random() * 9000);
         const { data: pac, error: errPac } = await supabaseClient
           .from("pacientes")
-          .insert({
-            tutor_id: tutor.id,
+          .insert([{
+            tutor_id: finalTutorId,
             uid_clinico: uidGenerado,
             nombre: pacNombre,
             especie: pacEspecie,
@@ -253,12 +351,13 @@
             sexo: pacSexo,
             fecha_nacimiento: pacNac,
             estado_vital: "ACTIVO"
-          })
+          }])
           .select()
           .single();
 
         if (errPac) throw errPac;
 
+        // 4. Mostrar resultado con enlace y código QR
         const urlFicha = `https://www.servivett.com/p/?id=${pac.token_publico}`;
         const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=400x400&ecc=H&margin=2&data=${encodeURIComponent(urlFicha)}`;
 
@@ -276,6 +375,8 @@
 
         document.getElementById("resultado").style.display = "block";
         document.getElementById("registro-form").reset();
+        document.getElementById("tutor-status-badge").style.display = "none";
+        tutorExistenteId = null;
         actualizarRazas();
 
       } catch (err) {
