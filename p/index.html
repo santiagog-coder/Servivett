@@ -3,173 +3,221 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Perfil y Emergencia | Servivett</title>
+  <title>GeoID Identificación · Servivett</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <style>
     :root {
       --primary: #008080;
       --primary-dark: #006666;
-      --bg: #f8fafc;
+      --accent: #ff7675;
+      --bg: #edf2f7;
       --card-bg: #ffffff;
-      --text-main: #0f172a;
-      --text-muted: #64748b;
+      --text-main: #1a202c;
+      --text-muted: #718096;
       --border: #e2e8f0;
-      --green: #16a34a;
-      --green-bg: #dcfce7;
-      --red: #dc2626;
-      --red-bg: #fee2e2;
+      --green: #10b981;
+      --green-bg: #ecfdf5;
     }
 
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
-      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-family: 'Plus Jakarta Sans', -apple-system, sans-serif;
     }
 
     body {
-      background-color: var(--bg);
+      background: #eef2f6;
       color: var(--text-main);
       display: flex;
       justify-content: center;
-      padding: 16px;
-      min-height: 100vh;
-    }
-
-    .container {
-      width: 100%;
-      max-width: 440px;
-      margin: auto;
-    }
-
-    .card {
-      background: var(--card-bg);
-      border-radius: 20px;
-      border: 1px solid var(--border);
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
-      overflow: hidden;
-      display: flex;
-      flex-direction: column;
-    }
-
-    .header-bar {
-      background: var(--primary);
-      padding: 18px 20px;
-      display: flex;
       align-items: center;
-      justify-content: space-between;
-      color: white;
+      min-height: 100vh;
+      padding: 24px 16px;
     }
 
-    .header-bar img {
+    .device-wrapper {
+      width: 100%;
+      max-width: 420px;
+      margin: 0 auto;
+    }
+
+    .geo-card {
+      background: var(--card-bg);
+      border-radius: 28px;
+      overflow: hidden;
+      box-shadow: 0 18px 40px -12px rgba(0, 30, 40, 0.12), 0 4px 12px rgba(0,0,0,0.03);
+      border: 1px solid rgba(255, 255, 255, 0.8);
+      position: relative;
+    }
+
+    .top-banner {
+      background: linear-gradient(135deg, #008080 0%, #005f5f 100%);
+      padding: 24px 20px 60px;
+      text-align: center;
+      position: relative;
+    }
+
+    .clinic-brand {
       height: 28px;
       filter: brightness(0) invert(1);
+      opacity: 0.95;
     }
 
-    .status-badge {
+    .geo-badge {
+      position: absolute;
+      top: 18px;
+      right: 18px;
+      background: rgba(255, 255, 255, 0.18);
+      backdrop-filter: blur(8px);
+      color: #fff;
       font-size: 11px;
       font-weight: 700;
-      text-transform: uppercase;
       letter-spacing: 0.5px;
       padding: 4px 10px;
-      border-radius: 999px;
-      background: rgba(255, 255, 255, 0.2);
+      border-radius: 20px;
+      text-transform: uppercase;
     }
 
-    .avatar-wrapper {
+    .avatar-area {
       position: relative;
-      width: 100%;
-      height: 220px;
-      background: #e2e8f0;
+      margin-top: -50px;
+      text-align: center;
     }
 
-    .avatar-wrapper img {
+    .avatar-circle {
+      width: 110px;
+      height: 110px;
+      border-radius: 50%;
+      background: #f8fafc;
+      margin: 0 auto;
+      border: 4px solid #ffffff;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .avatar-circle img {
       width: 100%;
       height: 100%;
       object-fit: cover;
     }
 
-    .content {
-      padding: 24px 20px;
-      display: flex;
-      flex-direction: column;
-      gap: 18px;
+    .avatar-fallback {
+      font-size: 42px;
+      color: #94a3b8;
+      user-select: none;
     }
 
-    .pet-identity {
+    .main-body {
+      padding: 16px 24px 24px;
       text-align: center;
     }
 
-    .pet-name {
+    .pet-title {
       font-size: 24px;
-      font-weight: 700;
-      color: var(--text-main);
+      font-weight: 800;
+      color: #0f172a;
+      letter-spacing: -0.3px;
     }
 
-    .pet-breed {
-      font-size: 14px;
-      color: var(--text-muted);
-      margin-top: 2px;
-    }
-
-    .info-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-      background: #f1f5f9;
-      padding: 14px;
-      border-radius: 12px;
-    }
-
-    .info-item {
-      display: flex;
-      flex-direction: column;
-    }
-
-    .info-label {
-      font-size: 11px;
-      font-weight: 600;
-      color: var(--text-muted);
-      text-transform: uppercase;
-    }
-
-    .info-value {
+    .pet-species-breed {
       font-size: 13.5px;
-      font-weight: 600;
-      color: var(--text-main);
-      margin-top: 2px;
+      font-weight: 500;
+      color: var(--text-muted);
+      margin-top: 3px;
     }
 
-    .badge-vacunas {
+    .status-pill {
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      font-size: 12px;
-      font-weight: 600;
-      padding: 8px 12px;
-      border-radius: 10px;
       background: var(--green-bg);
       color: var(--green);
+      font-size: 11.5px;
+      font-weight: 700;
+      padding: 6px 14px;
+      border-radius: 20px;
+      margin-top: 14px;
     }
 
-    .alert-box {
-      border-left: 4px solid var(--primary);
-      background: #f0fdfa;
-      padding: 10px 14px;
-      border-radius: 0 8px 8px 0;
-      font-size: 13px;
-      color: var(--text-main);
+    .pill-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--green);
     }
 
-    .actions {
+    .meta-cards-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-top: 20px;
+      text-align: left;
+    }
+
+    .meta-item {
+      background: #f8fafc;
+      border: 1px solid #f1f5f9;
+      border-radius: 16px;
+      padding: 12px 14px;
+    }
+
+    .meta-item .lbl {
+      font-size: 10.5px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: #94a3b8;
+      display: block;
+    }
+
+    .meta-item .val {
+      font-size: 14px;
+      font-weight: 700;
+      color: #1e293b;
+      margin-top: 2px;
+      display: block;
+    }
+
+    .medical-notice {
+      background: #fff7ed;
+      border: 1px solid #ffedd5;
+      color: #9a3412;
+      border-radius: 14px;
+      padding: 12px;
+      font-size: 12.5px;
+      font-weight: 500;
+      margin-top: 14px;
+      text-align: left;
+      display: none;
+    }
+
+    .gps-prompt-card {
+      background: #f0fdf4;
+      border: 1px dashed #86efac;
+      border-radius: 14px;
+      padding: 12px 14px;
+      font-size: 12px;
+      color: #166534;
+      margin-top: 16px;
+      display: none;
+      align-items: center;
+      gap: 10px;
+      text-align: left;
+    }
+
+    .cta-stack {
       display: flex;
       flex-direction: column;
       gap: 10px;
-      margin-top: 6px;
+      margin-top: 20px;
     }
 
     .btn {
@@ -178,48 +226,70 @@
       justify-content: center;
       gap: 8px;
       padding: 14px;
-      border-radius: 12px;
-      font-size: 14px;
-      font-weight: 600;
+      border-radius: 16px;
+      font-size: 14.5px;
+      font-weight: 700;
       text-decoration: none;
-      transition: opacity 0.2s;
+      transition: all 0.2s ease;
+      cursor: pointer;
+      border: none;
     }
 
-    .btn:active {
-      opacity: 0.85;
-    }
-
-    .btn-call {
+    .btn-tutor {
       background: var(--primary);
-      color: white;
+      color: #ffffff;
+      box-shadow: 0 6px 14px rgba(0, 128, 128, 0.25);
+    }
+
+    .btn-tutor:hover {
+      background: var(--primary-dark);
+      transform: translateY(-1px);
+    }
+
+    .btn-location {
+      background: #25d366;
+      color: #ffffff;
+      display: none;
+      box-shadow: 0 6px 14px rgba(37, 211, 102, 0.25);
+    }
+
+    .btn-location:hover {
+      background: #20ba59;
+      transform: translateY(-1px);
     }
 
     .btn-clinic {
+      background: #f1f5f9;
+      color: #475569;
+      font-size: 13.5px;
+    }
+
+    .btn-clinic:hover {
       background: #e2e8f0;
-      color: var(--text-main);
     }
 
-    .footer {
-      text-align: center;
+    .card-footer {
+      padding: 14px 20px 18px;
+      background: #fafbfc;
+      border-top: 1px solid #f1f5f9;
       font-size: 11px;
-      color: var(--text-muted);
-      padding: 16px;
-      border-top: 1px solid var(--border);
+      color: #94a3b8;
+      text-align: center;
     }
 
-    .loader {
+    .state-screen {
+      padding: 70px 20px;
       text-align: center;
-      padding: 60px 20px;
-      font-size: 14px;
       color: var(--text-muted);
+      font-size: 14px;
     }
   </style>
 </head>
 <body>
 
-  <div class="container">
-    <div class="card" id="card-box">
-      <div class="loader" id="loading-state">Cargando expediente médico...</div>
+  <div class="device-wrapper">
+    <div class="geo-card" id="geo-box">
+      <div class="state-screen" id="loading-view">Localizando expediente digital...</div>
     </div>
   </div>
 
@@ -228,8 +298,11 @@
     const SUPABASE_ANON_KEY = "sb_publishable_1k62mMMn9VzV_IT1tf2M-g_NDAeLMZX";
     const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
+    let latitudActual = null;
+    let longitudActual = null;
+
     function calcularEdad(fechaNacStr) {
-      if (!fechaNacStr) return "No registrada";
+      if (!fechaNacStr) return "Desconocida";
       const nac = new Date(fechaNacStr);
       const hoy = new Date();
       
@@ -252,13 +325,13 @@
       return `${dias} días`;
     }
 
-    async function cargarPerfil() {
-      const card = document.getElementById("card-box");
+    async function cargarGeoID() {
+      const box = document.getElementById("geo-box");
       const urlParams = new URLSearchParams(window.location.search);
       const tokenId = urlParams.get("id");
 
       if (!tokenId) {
-        card.innerHTML = `<div class="loader">Identificador de mascota no proporcionado.</div>`;
+        box.innerHTML = `<div class="state-screen">Identificador GeoID ausente.</div>`;
         return;
       }
 
@@ -272,79 +345,116 @@
         .single();
 
       if (error || !paciente) {
-        card.innerHTML = `<div class="loader">Expediente no encontrado o código inactivo.</div>`;
+        box.innerHTML = `<div class="state-screen">Dispositivo no vinculado o registro inactivo.</div>`;
         return;
       }
 
       const tutor = paciente.tutores || {};
       const edadTexto = calcularEdad(paciente.fecha_nacimiento);
-      const fotoUrl = paciente.foto_archivo 
-        ? `https://www.servivett.com/img/pacientes/${paciente.foto_archivo}`
-        : "https://www.servivett.com/logo.png";
+      const tutorNombreCorto = tutor.nombres ? tutor.nombres.split(' ')[0] : 'Tutor';
+      const telefonoTutor = tutor.telefono ? tutor.telefono.replace(/\s+/g, '') : '0991078623';
 
-      card.innerHTML = `
-        <div class="header-bar">
-          <img src="https://www.servivett.com/logo.png" alt="Servivett">
-          <span class="status-badge">${paciente.estado_vital}</span>
+      // Si existe foto en CDN se muestra, caso contrario se dibuja un avatar genérico limpio
+      const avatarHTML = paciente.foto_archivo
+        ? `<img src="https://www.servivett.com/img/pacientes/${paciente.foto_archivo}" alt="${paciente.nombre}" onerror="this.onerror=null; this.parentNode.innerHTML='<span class=\\'avatar-fallback\\'>🐾</span>';">`
+        : `<span class="avatar-fallback">🐾</span>`;
+
+      // Render de la interfaz estilo GeoID
+      box.innerHTML = `
+        <div class="top-banner">
+          <img src="https://www.servivett.com/logo.png" alt="Servivett" class="clinic-brand">
+          <span class="geo-badge">GeoID Activo</span>
         </div>
 
-        <div class="avatar-wrapper">
-          <img src="${fotoUrl}" alt="${paciente.nombre}" onerror="this.src='https://www.servivett.com/logo.png'">
+        <div class="avatar-area">
+          <div class="avatar-circle">
+            ${avatarHTML}
+          </div>
         </div>
 
-        <div class="content">
-          <div class="pet-identity">
-            <h1 class="pet-name">${paciente.nombre}</h1>
-            <p class="pet-breed">${paciente.especie} · ${paciente.raza} (${paciente.color_manto || 'Manto regular'})</p>
+        <div class="main-body">
+          <h1 class="pet-title">${paciente.nombre}</h1>
+          <p class="pet-species-breed">${paciente.especie} · ${paciente.raza} (${paciente.color_manto || 'Manto registrado'})</p>
+
+          <div class="status-pill">
+            <span class="pill-dot"></span>
+            Paciente Registrado en Servivett
           </div>
 
-          <div class="badge-vacunas">
-            <span style="font-size: 8px;">●</span>
-            Plan Vacunal Vigente en Servivett
-          </div>
-
-          <div class="info-grid">
-            <div class="info-item">
-              <span class="info-label">Edad Exacta</span>
-              <span class="info-value">${edadTexto}</span>
+          <div class="meta-cards-row">
+            <div class="meta-item">
+              <span class="lbl">Edad</span>
+              <span class="val">${edadTexto}</span>
             </div>
-            <div class="info-item">
-              <span class="info-label">Sexo / Estado</span>
-              <span class="info-value">${paciente.sexo} ${paciente.castrado ? '(Castrado)' : '(Entero)'}</span>
-            </div>
-            <div class="info-item">
-              <span class="info-label">ID Clínico</span>
-              <span class="info-value">${paciente.uid_clinico}</span>
-            </div>
-            <div class="info-item">
-              <span class="info-label">Microchip</span>
-              <span class="info-value">${paciente.microchip || 'No registrado'}</span>
+            <div class="meta-item">
+              <span class="lbl">Sexo / Condición</span>
+              <span class="val">${paciente.sexo} ${paciente.castrado ? '(Esterilizado)' : ''}</span>
             </div>
           </div>
 
-          <div class="alert-box">
-            <strong>Observaciones:</strong><br>
-            ${paciente.notas_medicas || 'Sin notas clínicas registradas.'}
+          <div class="medical-notice" id="medical-box">
+            <strong>Nota médica:</strong> <span id="medical-txt"></span>
           </div>
 
-          <div class="actions">
-            <a href="tel:${tutor.telefono || '+593991078623'}" class="btn btn-call">
-              📞 Llamar al Tutor (${tutor.nombres ? tutor.nombres.split(' ')[0] : 'Responsable'})
+          <div class="gps-prompt-card" id="gps-status-card">
+            <span>📍</span>
+            <span>Ubicación GPS capturada. Pulsa el botón verde para compartirla con el tutor.</span>
+          </div>
+
+          <div class="cta-stack">
+            <a href="tel:${telefonoTutor}" class="btn btn-tutor">
+              📞 Llamar a ${tutorNombreCorto}
             </a>
-            <a href="https://wa.me/593991078623?text=Hola%2C%20tengo%20informaci%C3%B3n%20sobre%20el%20paciente%20${encodeURIComponent(paciente.nombre)}%20(${paciente.uid_clinico})" class="btn btn-clinic" target="_blank">
-              💬 Notificar a Clínica Servivett
+
+            <a href="#" id="btn-share-location" class="btn btn-location" target="_blank">
+              📍 Enviar mi ubicación por WhatsApp
+            </a>
+
+            <a href="https://wa.me/593991078623?text=Hola%2C%20encontr%C3%A9%20a%20la%20mascota%20${encodeURIComponent(paciente.nombre)}" class="btn btn-clinic" target="_blank">
+              💬 Avisar a Clínica Servivett
             </a>
           </div>
         </div>
 
-        <footer class="footer">
-          Servivett Atención Veterinaria · Yaruquí, Quito<br>
-          Identificación de emergencia vinculada a expediente clínico digital.
+        <footer class="card-footer">
+          Identificación Inteligente Servivett · Yaruquí, Pichincha
         </footer>
       `;
+
+      // Filtrar condición médica (si solo dice "sin condicion..." o está vacío, no se muestra)
+      if (paciente.notas_medicas && 
+          !paciente.notas_medicas.toLowerCase().includes("sin condicion") && 
+          !paciente.notas_medicas.toLowerCase().includes("sin condición")) {
+        document.getElementById("medical-txt").textContent = paciente.notas_medicas;
+        document.getElementById("medical-box").style.display = "block";
+      }
+
+      // Solicitud de Georreferenciación en el navegador (GeoID)
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          (pos) => {
+            latitudActual = pos.coords.latitude;
+            longitudActual = pos.coords.longitude;
+            const mapsUrl = `https://maps.google.com/?q=${latitudActual},${longitudActual}`;
+            
+            // Adaptar teléfono al formato internacional 593
+            let fonoWa = telefonoTutor.startsWith('0') ? '593' + telefonoTutor.substring(1) : telefonoTutor;
+            const mensajeWa = encodeURIComponent(`Hola ${tutorNombreCorto}, acabo de escanear la placa de ${paciente.nombre}. Esta es mi ubicación actual: ${mapsUrl}`);
+
+            const btnLoc = document.getElementById("btn-share-location");
+            btnLoc.href = `https://wa.me/${fonoWa}?text=${mensajeWa}`;
+            btnLoc.style.display = "flex";
+            document.getElementById("gps-status-card").style.display = "flex";
+          },
+          (err) => {
+            // Si el usuario deniega la ubicación, no pasa nada; solo se usan los botones de llamada directa
+          },
+          { enableHighAccuracy: true, timeout: 6000 }
+        );
+      }
     }
 
-    cargarPerfil();
+    cargarGeoID();
   </script>
 </body>
 </html>
