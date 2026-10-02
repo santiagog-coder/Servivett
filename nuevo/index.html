@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admisión Clínica y GeoID — Servivett</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <style>
+    :root {
+      --primary: #008080;
+      --primary-dark: #006666;
+      --bg: #f1f5f9;
+      --card: #ffffff;
+      --border: #cbd5e1;
+      --text: #0f172a;
+      --muted: #64748b;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; }
+    body { background: var(--bg); color: var(--text); padding: 24px 16px; display: flex; justify-content: center; }
+    
+    .panel { width: 100%; max-width: 520px; background: var(--card); border-radius: 24px; padding: 24px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); }
+    .header { margin-bottom: 20px; }
+    .header h1 { font-size: 1.3rem; font-weight: 800; color: var(--primary); }
+    .header p { font-size: 0.85rem; color: var(--muted); margin-top: 2px; }
+
+    .section-title { font-size: 0.75rem; text-transform: uppercase; font-weight: 700; color: var(--muted); letter-spacing: 0.5px; margin: 16px 0 8px; }
+
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .form-group { margin-bottom: 12px; }
+    label { display: block; font-size: 0.8rem; font-weight: 600; color: var(--text); margin-bottom: 4px; }
+    input, select { width: 100%; padding: 11px 12px; border: 1.5px solid var(--border); border-radius: 12px; font-size: 0.9rem; outline: none; transition: 0.2s; background: #fff; }
+    input:focus, select:focus { border-color: var(--primary); }
+
+    .btn-submit { width: 100%; background: var(--primary); color: white; padding: 14px; border: none; border-radius: 14px; font-weight: 700; font-size: 0.95rem; cursor: pointer; margin-top: 14px; transition: 0.2s; }
+    .btn-submit:hover { background: var(--primary-dark); }
+
+    /* Resultado emergente */
+    .result-card { display: none; margin-top: 20px; padding: 20px; background: #f0fdf4; border: 1.5px solid #86efac; border-radius: 18px; text-align: center; }
+    .result-card h3 { color: #166534; font-size: 1.1rem; margin-bottom: 6px; }
+    .qr-img { width: 180px; height: 180px; margin: 14px auto; display: block; background: #fff; padding: 8px; border-radius: 12px; border: 1px solid #bbf7d0; }
+    .btn-wa { display: inline-flex; align-items: center; justify-content: center; gap: 8px; width: 100%; background: #25d366; color: white; text-decoration: none; padding: 12px; border-radius: 12px; font-weight: 700; font-size: 0.88rem; margin-top: 10px; }
+  </style>
+</head>
+<body>
+
+  <div class="panel">
+    <div class="header">
+      <h1>Registro Rápido de Paciente</h1>
+      <p>Generación instantánea de Ficha GeoID y Código QR</p>
+    </div>
+
+    <form id="registro-form" onsubmit="guardarRegistro(event)">
+      <div class="section-title">Datos del Tutor</div>
+      <div class="form-group">
+        <label>Nombre Completo</label>
+        <input type="text" id="tutor_nombre" placeholder="Ej. Juan Pérez" required>
+      </div>
+
+      <div class="grid-2">
+        <div class="form-group">
+          <label>Cédula / RUC</label>
+          <input type="text" id="tutor_cedula" placeholder="17XXXXXXXX" required>
+        </div>
+        <div class="form-group">
+          <label>Celular (WhatsApp)</label>
+          <input type="tel" id="tutor_telefono" placeholder="099XXXXXXX" required>
+        </div>
+      </div>
+
+      <div class="section-title">Datos del Paciente</div>
+      <div class="form-group">
+        <label>Nombre de la Mascota</label>
+        <input type="text" id="paciente_nombre" placeholder="Ej. Pelusa" required>
+      </div>
+
+      <div class="grid-2">
+        <div class="form-group">
+          <label>Especie</label>
+          <select id="paciente_especie">
+            <option value="Canino">Canino</option>
+            <option value="Felino">Felino</option>
+            <option value="Otro">Otro</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Sexo</label>
+          <select id="paciente_sexo">
+            <option value="Macho">Macho</option>
+            <option value="Hembra">Hembra</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="form-group">
+          <label>Raza</label>
+          <input type="text" id="paciente_raza" value="Mestizo">
+        </div>
+        <div class="form-group">
+          <label>Fecha de Nacimiento</label>
+          <input type="date" id="paciente_nacimiento" required>
+        </div>
+      </div>
+
+      <button type="submit" class="btn-submit" id="btn-guardar">Guardar y Generar QR</button>
+    </form>
+
+    <div class="result-card" id="resultado">
+      <h3>¡Paciente Registrado!</h3>
+      <p style="font-size: 0.85rem; color: #166534;" id="res-nombre"></p>
+      
+      <img id="qr-preview" class="qr-img" src="" alt="Código QR">
+
+      <a id="btn-enviar-wa" class="btn-wa" href="#" target="_blank">
+        💬 Enviar Carné y GeoID al Tutor
+      </a>
+      
+      <a id="link-directo" href="#" target="_blank" style="display: block; font-size: 0.75rem; color: #047857; margin-top: 10px; word-break: break-all;"></a>
+    </div>
+  </div>
+
+  <script>
+    const SUPABASE_URL = "https://llwbvbzrbdxlrhswgjft.supabase.co";
+    const SUPABASE_KEY = "sb_publishable_1k62mMMn9VzV_IT1tf2M-g_NDAeLMZX";
+    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    async function guardarRegistro(e) {
+      e.preventDefault();
+      const btn = document.getElementById("btn-guardar");
+      btn.disabled = true;
+      btn.textContent = "Procesando...";
+
+      const tutorNombre = document.getElementById("tutor_nombre").value.trim();
+      const tutorCedula = document.getElementById("tutor_cedula").value.trim();
+      let tutorTel = document.getElementById("tutor_telefono").value.trim();
+      
+      const pacNombre = document.getElementById("paciente_nombre").value.trim();
+      const pacEspecie = document.getElementById("paciente_especie").value;
+      const pacSexo = document.getElementById("paciente_sexo").value;
+      const pacRaza = document.getElementById("paciente_raza").value.trim();
+      const pacNac = document.getElementById("paciente_nacimiento").value;
+
+      try {
+        // 1. Guardar o actualizar tutor por cédula
+        const { data: tutor, error: errTutor } = await supabaseClient
+          .from("tutores")
+          .upsert({
+            nombres: tutorNombre,
+            cedula_ruc: tutorCedula,
+            telefono: tutorTel
+          }, { onConflict: "cedula_ruc" })
+          .select()
+          .single();
+
+        if (errTutor) throw errTutor;
+
+        // 2. Insertar paciente
+        const uidGenerado = "SVT-" + Math.floor(1000 + Math.random() * 9000);
+        const { data: pac, error: errPac } = await supabaseClient
+          .from("pacientes")
+          .insert({
+            tutor_id: tutor.id,
+            uid_clinico: uidGenerado,
+            nombre: pacNombre,
+            especie: pacEspecie,
+            raza: pacRaza,
+            sexo: pacSexo,
+            fecha_nacimiento: pacNac,
+            estado_vital: "ACTIVO"
+          })
+          .select()
+          .single();
+
+        if (errPac) throw errPac;
+
+        // 3. Generar enlace y QR dinámico
+        const urlFicha = `https://www.servivett.com/p/?id=${pac.token_publico}`;
+        const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=400x400&ecc=H&margin=2&data=${encodeURIComponent(urlFicha)}`;
+
+        document.getElementById("res-nombre").textContent = `${pac.nombre} (${pac.uid_clinico})`;
+        document.getElementById("qr-preview").src = qrUrl;
+        
+        const linkDir = document.getElementById("link-directo");
+        linkDir.href = urlFicha;
+        linkDir.textContent = urlFicha;
+
+        // Formato de teléfono para WhatsApp (+593)
+        let fonoWa = tutorTel.startsWith("0") ? "593" + tutorTel.substring(1) : tutorTel;
+        const mensajeWa = encodeURIComponent(`Hola ${tutorNombre.split(' ')[0]}, el carné digital y GeoID de ${pacNombre} ya está activo en Clínica Servivett:\n\n${urlFicha}`);
+        document.getElementById("btn-enviar-wa").href = `https://wa.me/${fonoWa}?text=${mensajeWa}`;
+
+        document.getElementById("resultado").style.display = "block";
+        document.getElementById("registro-form").reset();
+
+      } catch (err) {
+        alert("Ocurrió un error al guardar: " + err.message);
+      } finally {
+        btn.disabled = false;
+        btn.textContent = "Guardar y Generar QR";
+      }
+    }
+  </script>
+</body>
+</html>
