@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Acceso Administrativo — Servivett</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #008080;
+      --primary-dark: #006666;
+      --bg: #f8fafc;
+      --card: #ffffff;
+      --border: #e2e8f0;
+      --text: #0f172a;
+      --muted: #64748b;
+      --danger: #ef4444;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; }
+    body { background: var(--bg); color: var(--text); min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px; }
+    .card { width: 100%; max-width: 400px; background: var(--card); border-radius: 24px; padding: 32px 28px; box-shadow: 0 10px 25px rgba(0,0,0,0.04); border: 1px solid var(--border); }
+    .header { text-align: center; margin-bottom: 24px; }
+    .header h1 { font-size: 1.45rem; font-weight: 800; color: var(--primary); }
+    .header p { font-size: 0.82rem; color: var(--muted); margin-top: 4px; }
+    .form-group { margin-bottom: 16px; }
+    label { display: block; font-size: 0.78rem; font-weight: 700; color: var(--text); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.4px; }
+    input { width: 100%; padding: 12px 14px; border: 1.5px solid var(--border); border-radius: 12px; font-size: 0.95rem; outline: none; transition: 0.2s; background: #fff; }
+    input:focus { border-color: var(--primary); }
+    .btn-submit { width: 100%; background: var(--primary); color: white; padding: 13px; border: none; border-radius: 12px; font-weight: 700; font-size: 0.95rem; cursor: pointer; margin-top: 6px; transition: 0.2s; }
+    .btn-submit:hover { background: var(--primary-dark); }
+    .error-msg { display: none; background: #fef2f2; border: 1px solid #fecaca; color: var(--danger); font-size: 0.8rem; font-weight: 600; padding: 10px; border-radius: 10px; margin-bottom: 16px; text-align: center; }
+  </style>
+</head>
+<body>
+
+  <div class="card">
+    <div class="header">
+      <h1>Servivett Clínica</h1>
+      <p>Terminal Autorizada</p>
+    </div>
+
+    <div id="error-alert" class="error-msg">Credenciales incorrectas</div>
+
+    <form onsubmit="iniciarSesion(event)">
+      <div class="form-group">
+        <label>Usuario</label>
+        <input type="text" id="user" placeholder="Usuario" required autocomplete="username">
+      </div>
+
+      <div class="form-group">
+        <label>Contraseña</label>
+        <input type="password" id="pass" placeholder="••••••••" required autocomplete="current-password">
+      </div>
+
+      <button type="submit" class="btn-submit">Ingresar a Caja</button>
+    </form>
+  </div>
+
+  <script>
+    // Whitelist inicial
+    const WHITELIST = {
+      "admin": "admin"
+    };
+
+    function iniciarSesion(e) {
+      e.preventDefault();
+      const u = document.getElementById("user").value.trim();
+      const p = document.getElementById("pass").value.trim();
+      const error = document.getElementById("error-alert");
+
+      if (WHITELIST[u] && WHITELIST[u] === p) {
+        // Marcamos la sesión autorizada en este navegador
+        localStorage.setItem("svt_auth_token", "svt_session_active_" + btoa(u));
+        error.style.display = "none";
+        
+        // Redirige al formulario de admisión limpio
+        window.location.replace("/nuevo/");
+      } else {
+        error.style.display = "block";
+      }
+    }
+  </script>
+</body>
+</html>
