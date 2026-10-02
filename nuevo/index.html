@@ -46,7 +46,7 @@
       color: #047857;
       background: #ecfdf5;
       border: 1px solid #a7f3d0;
-      padding: 6px 10px;
+      padding: 7px 10px;
       border-radius: 8px;
       margin-top: 6px;
     }
@@ -71,19 +71,19 @@
     <form id="registro-form" onsubmit="guardarRegistro(event)">
       <div class="section-title">Datos del Tutor</div>
       
-      <!-- CÉDULA / DOCUMENTO PRIMERO -->
+      <!-- CÉDULA DE PRIMERA -->
       <div class="form-group">
-        <label>Documento de Identidad (Cédula / RUC / Pasaporte)</label>
+        <label>Documento de Identidad (Cédula / RUC)</label>
         <div class="grid-doc">
           <select id="tutor_tipo_doc">
             <option value="Cédula">Cédula</option>
             <option value="RUC">RUC</option>
             <option value="Pasaporte">Pasaporte</option>
           </select>
-          <input type="text" id="tutor_cedula" placeholder="Número de documento" required autocomplete="off">
+          <input type="text" id="tutor_cedula" placeholder="Ej. 1751594068" required autocomplete="off">
         </div>
         <div id="tutor-status-badge" class="badge-status">
-          ✓ Tutor registrado encontrado. Datos cargados automáticamente.
+          <!-- Texto dinámico generado por JavaScript -->
         </div>
       </div>
 
@@ -111,7 +111,7 @@
 
       <div class="form-group">
         <label>Dirección Domiciliaria</label>
-        <input type="text" id="tutor_direccion" placeholder="Sector, calle principal y secundaria" required>
+        <input type="text" id="tutor_direccion" placeholder="Sector, calles principal y secundaria" required>
       </div>
 
       <div class="section-title">Datos del Paciente</div>
@@ -137,7 +137,7 @@
         <div class="form-group">
           <label>Raza</label>
           <select id="paciente_raza">
-            <!-- Dinámico vía JS -->
+            <!-- Cargado automáticamente vía catálogo -->
           </select>
         </div>
       </div>
@@ -218,16 +218,16 @@
     const SUPABASE_KEY = "sb_publishable_1k62mMMn9VzV_IT1tf2M-g_NDAeLMZX";
     const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    // Variable global para reutilizar si el tutor ya existe
     let tutorExistenteId = null;
 
-    // AUTOCOMPLETADO AL ESCRIBIR CÉDULA
+    // AUTOCOMPLETADO AUTOMÁTICO EN TIEMPO REAL
     const inputCedula = document.getElementById("tutor_cedula");
-    inputCedula.addEventListener("blur", async () => {
+    inputCedula.addEventListener("input", async () => {
       const doc = inputCedula.value.trim();
       const badge = document.getElementById("tutor-status-badge");
 
-      if (doc.length < 5) {
+      // Verificamos si completó los 10 dígitos de cédula o 13 de RUC
+      if (doc.length !== 10 && doc.length !== 13) {
         badge.style.display = "none";
         tutorExistenteId = null;
         return;
@@ -245,7 +245,7 @@
           document.getElementById("tutor_nombre").value = tutor.nombres;
           document.getElementById("tutor_direccion").value = tutor.direccion || "";
 
-          // Ajustar prefijo y teléfono
+          // Formatear el teléfono celular
           if (tutor.telefono) {
             let tel = tutor.telefono;
             if (tel.startsWith("+593")) {
@@ -261,6 +261,10 @@
           }
 
           badge.style.display = "block";
+          badge.textContent = `✓ Tutor encontrado: ${tutor.nombres} (Datos cargados)`;
+          
+          // Saltar directo al nombre del paciente para no perder tiempo
+          document.getElementById("paciente_nombre").focus();
         } else {
           tutorExistenteId = null;
           badge.style.display = "none";
@@ -297,7 +301,7 @@
       try {
         let finalTutorId = tutorExistenteId;
 
-        // 1. Si no teníamos el tutor precargado, comprobamos si ya existe por si acaso
+        // Comprobación de seguridad por si el tutor ya existía pero no se disparó el input
         if (!finalTutorId) {
           const { data: existente } = await supabaseClient
             .from("tutores")
@@ -310,7 +314,7 @@
           }
         }
 
-        // 2. Si ya existe, actualizamos sus datos de contacto; si no, lo creamos
+        // Si ya existe actualizamos su contacto; si no, lo creamos
         if (finalTutorId) {
           await supabaseClient
             .from("tutores")
@@ -338,7 +342,7 @@
           finalTutorId = nuevoTutor.id;
         }
 
-        // 3. Insertar la nueva mascota vinculada al ID del tutor
+        // Registrar la nueva mascota con el ID de ese tutor
         const uidGenerado = "SVT-" + Math.floor(1000 + Math.random() * 9000);
         const { data: pac, error: errPac } = await supabaseClient
           .from("pacientes")
@@ -357,7 +361,7 @@
 
         if (errPac) throw errPac;
 
-        // 4. Mostrar resultado con enlace y código QR
+        // Generar enlace y código QR
         const urlFicha = `https://www.servivett.com/p/?id=${pac.token_publico}`;
         const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=400x400&ecc=H&margin=2&data=${encodeURIComponent(urlFicha)}`;
 
