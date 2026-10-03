@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Servivett Clinical OS · Estación Médica</title>
+  
+  <!-- Supabase CDN (Cliente Oficial) -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <style>
+    :root {
+      --bg: #f8fafc;
+      --surface: #ffffff;
+      --border: #e2e8f0;
+      --text: #0f172a;
+      --muted: #64748b;
+      --primary: #0284c7;
+      --primary-dark: #0369a1;
+      --danger: #ef4444;
+      --success: #10b981;
+      --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    /* TOPBAR DE NAVEGACIÓN Y AUDITORÍA */
+    header {
+      background: #0f172a;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 16px;
+      height: 52px;
+      flex-shrink: 0;
+    }
+    .brand-group { display: flex; align-items: center; gap: 12px; }
+    .brand-title { font-size: 13px; font-weight: 800; letter-spacing: 0.8px; text-transform: uppercase; }
+    .badge-branch { background: #334155; padding: 3px 8px; border-radius: 4px; font-size: 11px; }
+
+    /* MOTOR DE BÚSQUEDA GLOBAL ESTILO GVET */
+    .search-container { position: relative; width: 440px; }
+    .search-input {
+      width: 100%;
+      background: #1e293b;
+      border: 1px solid #334155;
+      border-radius: 6px;
+      padding: 6px 12px;
+      color: #fff;
+      font-size: 12px;
+      outline: none;
+    }
+    .search-input:focus { border-color: var(--primary); background: #0f172a; }
+    .search-dropdown {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      background: #ffffff;
+      color: var(--text);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+      margin-top: 4px;
+      z-index: 100;
+      display: none;
+      max-height: 280px;
+      overflow-y: auto;
+    }
+    .search-item {
+      padding: 8px 12px;
+      border-bottom: 1px solid var(--border);
+      cursor: pointer;
+      font-size: 12px;
+      display: flex;
+      justify-content: space-between;
+    }
+    .search-item:hover { background: #f1f5f9; }
+
+    /* TRACKING / RESPONSABLE */
+    .user-tracking { display: flex; align-items: center; gap: 10px; font-size: 12px; }
+    .vet-badge {
+      background: #0284c7;
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-weight: 600;
+      font-family: var(--font-mono);
+    }
+
+    /* CONTENEDOR PRINCIPAL */
+    .main-layout { display: flex; flex-grow: 1; overflow: hidden; }
+
+    /* PANEL LATERAL: COLA DE ESPERA */
+    .queue-sidebar {
+      width: 280px;
+      background: var(--surface);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+    }
+    .queue-header {
+      padding: 12px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12px;
+      font-weight: 700;
+    }
+    .btn-new {
+      background: var(--primary);
+      color: #fff;
+      border: none;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 11px;
+      cursor: pointer;
+    }
+    .queue-list { overflow-y: auto; flex-grow: 1; }
+    .queue-card {
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--border);
+      cursor: pointer;
+    }
+    .queue-card:hover, .queue-card.active { background: #f0f9ff; border-left: 3px solid var(--primary); }
+    .queue-card-name { font-weight: 700; font-size: 13px; }
+    .queue-card-meta { font-size: 11px; color: var(--muted); margin-top: 2px; }
+
+    /* ESPACIO DE TRABAJO CLÍNICO */
+    .workspace {
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+      padding: 16px;
+      gap: 16px;
+    }
+
+    /* CABECERA DE PACIENTE ACTIVO */
+    .patient-header {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .patient-bio { display: flex; align-items: center; gap: 12px; }
+    .patient-avatar {
+      width: 48px;
+      height: 48px;
+      border-radius: 6px;
+      background: #e2e8f0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+    }
+    .patient-meta-grid { display: flex; gap: 16px; font-size: 12px; margin-top: 4px; color: var(--muted); }
+    .patient-meta-grid strong { color: var(--text); }
+
+    /* PESTAÑAS CLÍNICAS (SOAP, RECETA, CONSENTIMIENTOS, LAB) */
+    .tabs-bar { display: flex; gap: 8px; border-bottom: 1px solid var(--border); }
+    .tab-btn {
+      padding: 8px 16px;
+      border: none;
+      background: none;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      color: var(--muted);
+      border-bottom: 2px solid transparent;
+    }
+    .tab-btn.active { color: var(--primary); border-color: var(--primary); }
+
+    .tab-content {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 16px;
+      flex-grow: 1;
+    }
+
+    /* FORMULARIOS INTERNOS */
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
+    .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-bottom: 12px; }
+    label { display: block; font-size: 11px; font-weight: 700; margin-bottom: 4px; text-transform: uppercase; color: var(--muted); }
+    input, select, textarea {
+      width: 100%;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 6px 8px;
+      font-size: 12px;
+      outline: none;
+    }
+    textarea { resize: vertical; min-height: 70px; }
+
+    /* BOTONES DE ACCIÓN */
+    .btn-action {
+      background: var(--text);
+      color: #fff;
+      border: none;
+      padding: 8px 14px;
+      border-radius: 4px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .btn-action:hover { background: #334155; }
+
+    /* MODAL DE ADMISIÓN RÁPIDA */
+    .modal-backdrop {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(15, 23, 42, 0.6);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+    }
+    .modal-card {
+      background: #fff;
+      width: 580px;
+      border-radius: 8px;
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2);
+      overflow: hidden;
+    }
+    .modal-header {
+      background: #0f172a;
+      color: #fff;
+      padding: 12px 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 13px;
+      font-weight: 700;
+    }
+    .modal-body { padding: 16px; }
+    .modal-footer {
+      padding: 10px 16px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+      background: #f8fafc;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 1. TOPBAR: MARCA, MOTOR BÚSQUEDA Y AUDITORÍA -->
+  <header>
+    <div class="brand-group">
+      <div class="brand-title">Servivett Clinical OS</div>
+      <div class="badge-branch">Sede: Yaruquí</div>
+    </div>
+
+    <!-- Motor Autocompletado GVET -->
+    <div class="search-container">
+      <input type="text" id="globalSearch" class="search-input" placeholder="🔍 Buscar por Cédula, Tutor, Paciente o Token QR..." autocomplete="off">
+      <div id="searchDropdown" class="search-dropdown"></div>
+    </div>
+
+    <!-- Huella de Responsabilidad / Auditoría -->
+    <div class="user-tracking" data-vet-id="VET-001" data-vet-senescyt="1005-03-453931">
+      <span>Dr. Oscar Guepud</span>
+      <span class="vet-badge">VET-001</span>
+    </div>
+  </header>
+
+  <!-- 2. LAYOUT PRINCIPAL -->
+  <div class="main-layout">
+    
+    <!-- Barra Lateral: Pacientes en Consulta -->
+    <aside class="queue-sidebar">
+      <div class="queue-header">
+        <span>COLA DE ATENCIÓN</span>
+        <button class="btn-new" onclick="abrirModalAdmision()">+ Nuevo</button>
+      </div>
+      <div class="queue-list" id="queueContainer">
+        <!-- Mock Data Inicial -->
+        <div class="queue-card active" onclick="seleccionarPacienteMock('Max', 'Canino', 'Shih Tzu', '4.5', 'rlIB0Y1e8E', 'Santiago Guepud', '1722334455')">
+          <div class="queue-card-name">Max 🐾</div>
+          <div class="queue-card-meta">Shih Tzu · 4.5 kg · Tutor: Santiago G.</div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Área de Trabajo del Doctor -->
+    <main class="workspace">
+      
+      <!-- Ficha Rápida del Paciente Seleccionado -->
+      <section class="patient-header">
+        <div class="patient-bio">
+          <div class="patient-avatar">🐶</div>
+          <div>
+            <h2 id="curName" style="font-size: 16px; font-weight: 800;">Max</h2>
+            <div class="patient-meta-grid">
+              <div>Raza: <strong id="curBreed">Shih Tzu</strong></div>
+              <div>Peso: <strong id="curWeight">4.50 kg</strong></div>
+              <div>Tutor: <strong id="curTutor">Santiago Guepud</strong></div>
+              <div>GeoID: <strong id="curToken" style="font-family: var(--font-mono);">rlIB0Y1e8E</strong></div>
+            </div>
+          </div>
+        </div>
+        <div>
+          <button class="btn-action" onclick="abrirCarnetCliente()">📲 Ver Carnet / Wallet</button>
+        </div>
+      </section>
+
+      <!-- Selector de Pestañas Funcionales -->
+      <nav class="tabs-bar">
+        <button class="tab-btn active" onclick="switchTab('recetaTab')">💊 Receta Rp/ (A5)</button>
+        <button class="tab-btn" onclick="switchTab('consentTab')">⚖️ Consentimientos (A5)</button>
+        <button class="tab-btn" onclick="switchTab('labTab')">🔬 Gabinete IA (A4)</button>
+      </nav>
+
+      <!-- Tab 1: Prescripción Médica y Posología Automática -->
+      <div id="recetaTab" class="tab-content">
+        <div class="grid-3">
+          <div>
+            <label>Fármaco Vademécum</label>
+            <select id="vademecumSelect" onchange="calcularDosisAuto()">
+              <option value="">-- Seleccionar fármaco --</option>
+              <option value="meloxicam">Meloxicam Gotas 1.5 mg/ml</option>
+              <option value="protector">Protector Gástrico 2 mg/ml</option>
+              <option value="cefalexina">Cefalexina 500 mg</option>
+            </select>
+          </div>
+          <div>
+            <label>Dosis Calculada</label>
+            <input type="text" id="calculatedDose" readonly placeholder="Cálculo automático...">
+          </div>
+          <div>
+            <label>Acción</label>
+            <button class="btn-action" style="margin-top: 18px; width: 100%; justify-content: center;" onclick="agregarAlRp()">+ Añadir al Rp/</button>
+          </div>
+        </div>
+
+        <div style="margin-bottom: 12px;">
+          <label>Cuerpo de la Receta (Rp/)</label>
+          <textarea id="rpBody" placeholder="Fármacos prescritos..."></textarea>
+        </div>
+
+        <div style="margin-bottom: 12px;">
+          <label>Posología e Instrucciones al Tutor</label>
+          <textarea id="posologyBody" placeholder="Horarios e indicaciones de administración..."></textarea>
+        </div>
+
+        <button class="btn-action" onclick="imprimirRecetaA5()">🖨️ Compilar e Imprimir Receta A5 (2 Caras)</button>
+      </div>
+
+      <!-- Tab 2: Consentimientos Legales A5 -->
+      <div id="consentTab" class="tab-content" style="display: none;">
+        <div class="grid-2">
+          <div>
+            <label>Tipo de Documento Notarial</label>
+            <select id="consentType">
+              <option value="quirurgico">Quirúrgico y Anestésico</option>
+              <option value="hospitalizacion">Internamiento / Hospitalización</option>
+              <option value="alta">Alta Voluntaria contra Criterio Médico</option>
+              <option value="eutanasia">Autorización Eutanasia Humanitaria</option>
+            </select>
+          </div>
+          <div>
+            <label>Exámenes Prequirúrgicos</label>
+            <select id="preExams">
+              <option value="true">Aprobados / Realizados</option>
+              <option value="false">Exonerados por el Tutor</option>
+            </select>
+          </div>
+        </div>
+        <div style="margin-bottom: 12px;">
+          <label>Procedimiento o Diagnóstico Clínico</label>
+          <textarea id="consentDetail" placeholder="Detalle técnico del procedimiento o causa clínica..."></textarea>
+        </div>
+        <button class="btn-action" onclick="imprimirConsentimientoA5()">🖨️ Compilar Consentimiento A5</button>
+      </div>
+
+      <!-- Tab 3: Gabinete Analítico IA (A4) -->
+      <div id="labTab" class="tab-content" style="display: none;">
+        <label>Fotografía de Tira Térmica / Analizador</label>
+        <div style="border: 2px dashed var(--border); padding: 24px; text-align: center; border-radius: 6px; margin-bottom: 12px;">
+          <input type="file" id="labPhoto" accept="image/*" style="display: none;" onchange="handleLabUpload(this)">
+          <button class="btn-action" onclick="document.getElementById('labPhoto').click()">📁 Seleccionar Foto del Analizador</button>
+          <div id="labUploadStatus" style="font-size: 11px; color: var(--muted); margin-top: 8px;">Formatos soportados: JPG, PNG. Extracción directa con Gemini 2.5 Flash.</div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <!-- 3. MODAL ADMISIÓN RÁPIDA (GVET STYLE) -->
+  <div class="modal-backdrop" id="admissionModal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <span>NUEVA ADMISIÓN DE PACIENTE</span>
+        <button onclick="cerrarModalAdmision()" style="background:none; border:none; color:#fff; cursor:pointer;">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="grid-2">
+          <div>
+            <label>C.I. / R.U.C. Tutor</label>
+            <input type="text" id="m_tutorCi" placeholder="1722334455">
+          </div>
+          <div>
+            <label>Nombre del Tutor</label>
+            <input type="text" id="m_tutorName" placeholder="Nombres completos">
+          </div>
+        </div>
+        <div class="grid-2">
+          <div>
+            <label>Teléfono WhatsApp</label>
+            <input type="text" id="m_tutorPhone" placeholder="0991078623">
+          </div>
+          <div>
+            <label>Nombre Paciente</label>
+            <input type="text" id="m_petName" placeholder="Nombre de la mascota">
+          </div>
+        </div>
+        <div class="grid-3">
+          <div>
+            <label>Especie</label>
+            <select id="m_petSpecies" onchange="actualizarRazas()">
+              <option value="Canino">Canino</option>
+              <option value="Felino">Felino</option>
+            </select>
+          </div>
+          <div>
+            <label>Raza</label>
+            <input list="breedList" id="m_petBreed" placeholder="Seleccione o escriba...">
+            <datalist id="breedList"></datalist>
+          </div>
+          <div>
+            <label>Peso (kg)</label>
+            <input type="number" step="0.01" id="m_petWeight" placeholder="Ej: 5.2">
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-action" style="background:#e2e8f0; color:#0f172a;" onclick="cerrarModalAdmision()">Cancelar</button>
+        <button class="btn-action" style="background:var(--primary);" onclick="guardarAdmision()">Guardar y Abrir Ficha</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4. LÓGICA CLÍNICA, VADEMÉCUM Y MOCK INTERACTIVO -->
+  <script>
+    // Catálogos de Autocompletado
+    const RAZAS = {
+      Canino: ["Mestizo", "Shih Tzu", "Poodle / Caniche", "Schnauzer", "Golden Retriever", "Pastor Alemán", "Bulldog Francés", "Pitbull", "Chihuahua"],
+      Felino: ["Mestizo / DSH", "Siamés", "Persa", "Maine Coon", "Angora"]
+    };
+
+    // Vademécum Oficial Servivett
+    const VADEMECUM = {
+      meloxicam: { nombre: "Meloxicam Gotas 1.5 mg/ml", pres: "Frasco gotero 10 ml (#1)", dosis: 0.1, conc: 1.5, gotasMl: 20, via: "oral", freq: "c/24h con comida", dias: 4 },
+      protector: { nombre: "Protector Gástrico 2 mg/ml", pres: "Frasco 30 ml (#1)", dosis: 0.5, conc: 2.0, gotasMl: null, via: "oral", freq: "c/24h ayunas (20m antes)", dias: 7 },
+      cefalexina: { nombre: "Cefalexina 500 mg", pres: "Tabletas (#10)", dosis: 25.0, conc: 500.0, gotasMl: null, via: "oral", freq: "c/12h tras comidas", dias: 7 }
+    };
+
+    let pacienteActual = {
+      nombre: "Max", especie: "Canino", raza: "Shih Tzu", peso: 4.5, token: "rlIB0Y1e8E", tutor: "Santiago Guepud", ci: "1722334455"
+    };
+
+    // Autocompletado al cargar
+    function actualizarRazas() {
+      const esp = document.getElementById("m_petSpecies").value;
+      const dl = document.getElementById("breedList");
+      dl.innerHTML = "";
+      (RAZAS[esp] || []).forEach(r => {
+        const opt = document.createElement("option");
+        opt.value = r;
+        dl.appendChild(opt);
+      });
+    }
+    actualizarRazas();
+
+    // Motor de Búsqueda Dinámico (GVET Style)
+    const mockDB = [
+      { nombre: "Max", especie: "Canino", raza: "Shih Tzu", peso: 4.5, token: "rlIB0Y1e8E", tutor: "Santiago Guepud", ci: "1722334455" },
+      { nombre: "Luna", especie: "Felino", raza: "Siamés", peso: 3.2, token: "x9Ak2L0p1Z", tutor: "María Pérez", ci: "1711223344" }
+    ];
+
+    const searchInput = document.getElementById("globalSearch");
+    const dropdown = document.getElementById("searchDropdown");
+
+    searchInput.addEventListener("input", (e) => {
+      const q = e.target.value.toLowerCase().trim();
+      if (!q) { dropdown.style.display = "none"; return; }
+
+      const matches = mockDB.filter(p => 
+        p.nombre.toLowerCase().includes(q) || 
+        p.tutor.toLowerCase().includes(q) || 
+        p.ci.includes(q) ||
+        p.token.toLowerCase().includes(q)
+      );
+
+      if (matches.length > 0) {
+        dropdown.innerHTML = matches.map(p => `
+          <div class="search-item" onclick="seleccionarPacienteMock('${p.nombre}', '${p.especie}', '${p.raza}', '${p.peso}', '${p.token}', '${p.tutor}', '${p.ci}')">
+            <div><strong>${p.nombre}</strong> (${p.especie} · ${p.raza})</div>
+            <div style="color:var(--muted);">${p.tutor} · CI: ${p.ci}</div>
+          </div>
+        `).join("");
+        dropdown.style.display = "block";
+      } else {
+        dropdown.style.display = "none";
+      }
+    });
+
+    function seleccionarPacienteMock(nom, esp, raza, peso, token, tutor, ci) {
+      pacienteActual = { nombre: nom, especie: esp, raza: raza, peso: parseFloat(peso), token: token, tutor: tutor, ci: ci };
+      document.getElementById("curName").innerText = nom;
+      document.getElementById("curBreed").innerText = raza;
+      document.getElementById("curWeight").innerText = peso + " kg";
+      document.getElementById("curTutor").innerText = tutor;
+      document.getElementById("curToken").innerText = token;
+      dropdown.style.display = "none";
+      searchInput.value = "";
+      calcularDosisAuto();
+    }
+
+    // Cálculo Posológico Reactivo
+    function calcularDosisAuto() {
+      const key = document.getElementById("vademecumSelect").value;
+      if (!key) { document.getElementById("calculatedDose").value = ""; return; }
+      
+      const med = VADEMECUM[key];
+      const peso = pacienteActual.peso;
+      let pos = "";
+
+      if (key === "meloxicam") {
+        const gotas = Math.max(1, Math.round(((med.dosis * peso) / med.conc) * med.gotasMl));
+        pos = `${gotas} gotas ${med.freq} por ${med.dias} días`;
+      } else if (key === "protector") {
+        const ml = Math.max(0.5, ((med.dosis * peso) / med.conc).toFixed(1));
+        pos = `${ml} ml ${med.freq} por ${med.dias} días`;
+      } else if (key === "cefalexina") {
+        const tabs = ((med.dosis * peso) / med.conc).toFixed(2);
+        pos = `${tabs} tab(s) ${med.freq} por ${med.dias} días`;
+      }
+      document.getElementById("calculatedDose").value = pos;
+    }
+
+    function agregarAlRp() {
+      const key = document.getElementById("vademecumSelect").value;
+      const dosis = document.getElementById("calculatedDose").value;
+      if (!key || !dosis) return;
+
+      const med = VADEMECUM[key];
+      const rpArea = document.getElementById("rpBody");
+      const posArea = document.getElementById("posologyBody");
+
+      rpArea.value += (rpArea.value ? "\n\n" : "") + `• ${med.nombre}\n  Presentación: ${med.pres}`;
+      posArea.value += (posArea.value ? "\n" : "") + `• ${med.nombre}: Administrar ${dosis} vía ${med.via}.`;
+    }
+
+    // Control de Pestañas
+    function switchTab(tabId) {
+      document.querySelectorAll(".tab-content").forEach(el => el.style.display = "none");
+      document.querySelectorAll(".tab-btn").forEach(el => el.classList.remove("active"));
+      document.getElementById(tabId).style.display = "block";
+      event.target.classList.add("active");
+    }
+
+    // Modal de Admisión
+    function abrirModalAdmision() { document.getElementById("admissionModal").style.display = "flex"; }
+    function cerrarModalAdmision() { document.getElementById("admissionModal").style.display = "none"; }
+    function guardarAdmision() {
+      const nuevoToken = Math.random().toString(36).substring(2, 12);
+      seleccionarPacienteMock(
+        document.getElementById("m_petName").value || "Paciente",
+        document.getElementById("m_petSpecies").value,
+        document.getElementById("m_petBreed").value || "Mestizo",
+        document.getElementById("m_petWeight").value || "1.0",
+        nuevoToken,
+        document.getElementById("m_tutorName").value || "Tutor",
+        document.getElementById("m_tutorCi").value || "9999999999"
+      );
+      cerrarModalAdmision();
+    }
+
+    function abrirCarnetCliente() {
+      window.open(`/carnet/?id=${pacienteActual.token}`, '_blank');
+    }
+
+    function imprimirRecetaA5() {
+      alert(`Compilando prescripción médica A5 oficial para ${pacienteActual.nombre} con firma de Dr. Oscar Guepud...`);
+    }
+
+    function imprimirConsentimientoA5() {
+      const tipo = document.getElementById("consentType").value;
+      alert(`Compilando consentimiento notarial (${tipo}) A5 para el tutor ${pacienteActual.tutor}...`);
+    }
+
+    function handleLabUpload(input) {
+      if (input.files && input.files[0]) {
+        document.getElementById("labUploadStatus").innerText = `Procesando ${input.files[0].name} mediante Gemini 2.5 Flash...`;
+      }
+    }
+  </script>
+</body>
+</html>
