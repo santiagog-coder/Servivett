@@ -3,752 +3,646 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Servivett OS · Mostrador de Recepción</title>
+  <title>Servivett OS · Terminal de Recepción</title>
   
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
-  
-  <!-- Google Fonts: Inter -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
-
   <script>
     tailwind.config = {
       theme: {
         extend: {
-          fontFamily: {
-            sans: ['Inter', 'sans-serif'],
-            mono: ['JetBrains Mono', 'monospace'],
-          },
           colors: {
-            clinic: {
-              50: '#ecfdf5',
-              100: '#d1fae5',
-              500: '#10b981',
-              600: '#059669',
-              700: '#047857',
-            },
-            tealmed: {
-              500: '#14b8a6',
-              600: '#0d9488',
-              700: '#0f766e',
+            brand: {
+              emerald: '#059669',
+              teal: '#0d9488',
+              dark: '#0f172a'
             }
+          },
+          fontFamily: {
+            sans: ['Inter', 'Plus Jakarta Sans', 'system-ui', 'sans-serif'],
           }
         }
       }
     }
   </script>
 
+  <!-- Google Fonts: Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Supabase JS Client v2 CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
   <style>
-    /* Scrollbars delgados y profesionales */
-    ::-webkit-scrollbar { width: 5px; height: 5px; }
-    ::-webkit-scrollbar-track { background: transparent; }
-    ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 9999px; }
-    ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+    /* Estilos para animación sutil de alerta moroso */
+    @keyframes pulse-subtle {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.85; transform: scale(0.98); }
+    }
+    .badge-moroso-pulse {
+      animation: pulse-subtle 2s infinite ease-in-out;
+    }
   </style>
 </head>
-<body class="h-full flex flex-col font-sans text-slate-800 antialiased select-none">
+<body class="h-full flex flex-col font-sans text-slate-800 antialiased selection:bg-brand-emerald selection:text-white">
 
-  <!-- ================= 1. HEADER SUPERIOR INSTITUCIONAL ================= -->
-  <header class="h-16 bg-white border-b border-slate-200 px-5 flex items-center justify-between gap-4 flex-shrink-0 z-30 shadow-xs">
-    
-    <!-- Izquierda: Identidad y Sede -->
-    <div class="flex items-center gap-3">
-      <div class="flex items-center gap-2">
-        <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-clinic-600 to-tealmed-500 flex items-center justify-center text-white shadow-sm font-black text-lg">
-          🐾
+  <!-- ================= 1. HEADER SUPERIOR ================= -->
+  <header class="sticky top-0 z-40 bg-white border-b border-slate-200 shadow-sm flex-shrink-0">
+    <div class="max-w-[1680px] mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
+      
+      <!-- LOGO Y SEDE -->
+      <div class="flex items-center gap-3 min-w-[240px]">
+        <div class="w-9 h-9 rounded-lg bg-slate-900 flex items-center justify-center text-white font-extrabold text-base tracking-tighter shadow-sm">
+          SV
         </div>
         <div>
-          <span class="font-extrabold text-base tracking-tight text-slate-900 block leading-tight">SERVIVETT <span class="text-clinic-600">OS</span></span>
-          <span class="text-[10px] font-semibold tracking-wider uppercase text-slate-400">Frontdesk Edition</span>
+          <div class="flex items-center gap-2">
+            <span class="font-extrabold text-slate-900 tracking-tight text-sm uppercase">Servivett OS</span>
+            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
+              Yaruquí
+            </span>
+          </div>
+          <p class="text-[11px] font-medium text-slate-400">Recepción / Mostrador</p>
         </div>
       </div>
-      
-      <div class="h-6 w-px bg-slate-200 mx-1"></div>
 
-      <!-- Sede y Estado de Caja -->
-      <div class="flex items-center gap-2">
-        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-slate-100 text-slate-700 border border-slate-200">
-          Sede: Yaruquí
-        </span>
-        <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
-          <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-          Caja Abierta
-        </span>
-      </div>
-    </div>
+      <!-- INPUT DE BÚSQUEDA UNIVERSAL (CON ATAJO F1) -->
+      <div class="flex-1 max-w-2xl relative">
+        <div class="relative flex items-center">
+          <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+            </svg>
+          </div>
+          
+          <input 
+            type="text" 
+            id="globalSearchInput"
+            autocomplete="off"
+            placeholder="Buscar por Mascota, Tutor, Cédula (10 dígitos) o UID..."
+            class="w-full pl-10 pr-16 py-2 bg-slate-50 border border-slate-300 rounded-lg text-sm text-slate-800 placeholder-slate-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-brand-emerald focus:border-brand-emerald transition-all shadow-inner"
+          >
+          
+          <div class="absolute inset-y-0 right-0 pr-2.5 flex items-center">
+            <kbd class="inline-flex items-center px-2 py-0.5 border border-slate-300 rounded text-[11px] font-bold text-slate-500 bg-white shadow-sm cursor-pointer select-none" onclick="document.getElementById('globalSearchInput').focus()">
+              F1
+            </kbd>
+          </div>
+        </div>
 
-    <!-- Centro: Motor de Búsqueda Universal -->
-    <div class="flex-1 max-w-2xl relative">
-      <div class="relative flex items-center">
-        <svg class="w-4 h-4 text-slate-400 absolute left-3.5 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-        </svg>
-        <input 
-          id="globalSearchInput"
-          type="text" 
-          placeholder="Pistolear QR, cédula (10 dígitos), microchip, mascota o sector..."
-          class="w-full h-10 pl-10 pr-16 bg-slate-100/80 hover:bg-slate-100 focus:bg-white text-xs font-medium text-slate-900 placeholder:text-slate-400 rounded-lg border border-slate-200 focus:border-clinic-500 focus:ring-2 focus:ring-clinic-500/20 outline-none transition-all"
-        />
-        <div class="absolute right-2.5 flex items-center gap-1">
-          <kbd class="px-1.5 py-0.5 text-[10px] font-mono font-semibold bg-white text-slate-500 border border-slate-200 rounded shadow-2xs">F1</kbd>
+        <!-- DROPDOWN FLOTANTE DE RESULTADOS DE BÚSQUEDA -->
+        <div 
+          id="searchResultsDropdown" 
+          class="hidden absolute top-full left-0 right-0 mt-2 bg-white rounded-xl shadow-2xl border border-slate-200 max-h-[460px] overflow-y-auto divide-y divide-slate-100 z-50"
+        >
+          <!-- Contenido inyectado dinámicamente -->
         </div>
       </div>
-    </div>
 
-    <!-- Derecha: Botón de Admisión y Reloj en Tiempo Real -->
-    <div class="flex items-center gap-4">
-      <div class="text-right hidden lg:block">
-        <div id="liveClock" class="font-mono text-sm font-bold text-slate-800 tabular-nums leading-none">--:--:--</div>
-        <div id="liveDate" class="text-[11px] text-slate-400 font-medium capitalize mt-0.5">Cargando fecha...</div>
+      <!-- ACCIONES Y ESTADO EN VIVO -->
+      <div class="flex items-center gap-4 min-w-[240px] justify-end">
+        <div class="flex items-center gap-2 text-xs font-medium text-slate-500 bg-slate-50 px-2.5 py-1 rounded-md border border-slate-200">
+          <span id="connectionDot" class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+          <span id="connectionText">En línea</span>
+        </div>
+
+        <a 
+          href="/nuevo/" 
+          class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs transition-colors shadow-sm focus:ring-2 focus:ring-emerald-500 focus:ring-offset-1"
+        >
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/>
+          </svg>
+          Nuevo Paciente
+        </a>
       </div>
 
-      <a href="/nuevo" class="inline-flex items-center gap-2 bg-clinic-600 hover:bg-clinic-700 text-white font-semibold text-xs px-3.5 py-2.5 rounded-lg shadow-sm hover:shadow transition-all active:scale-[0.98]">
-        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M12 4v16m8-8H4"></path>
-        </svg>
-        <span>+ Nuevo Ingreso / Paciente</span>
-      </a>
     </div>
-
   </header>
 
-  <!-- ================= CUERPO PRINCIPAL (3 COLUMNAS) ================= -->
-  <div class="flex-1 flex overflow-hidden">
-
-    <!-- ================= COLUMNA 1: TRÁFICO Y SALAS DE ESPERA (~320px) ================= -->
-    <aside class="w-80 bg-white border-r border-slate-200 flex flex-col flex-shrink-0">
+  <!-- ================= LAYOUT PRINCIPAL DE 2 COLUMNAS ================= -->
+  <main class="flex-1 max-w-[1680px] w-full mx-auto p-4 sm:p-6 grid grid-cols-1 lg:grid-cols-12 gap-6 overflow-hidden">
+    
+    <!-- ================= COLUMNA IZQUIERDA: TRÁFICO Y SALA DE ESPERA (60% / 7 COLS) ================= -->
+    <section class="lg:col-span-7 flex flex-col bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden h-[calc(100vh-100px)]">
       
-      <!-- Pestañas de Sala -->
-      <div class="p-3 border-b border-slate-200 bg-slate-50/70">
-        <div class="flex items-center justify-between text-xs font-bold text-slate-500 mb-2">
-          <span>SALAS DE ESPERA</span>
-          <span class="text-[11px] font-medium text-slate-400">Total: 7</span>
-        </div>
-        <div class="grid grid-cols-3 gap-1 bg-slate-200/80 p-1 rounded-lg text-xs font-semibold text-slate-600" id="queueTabs">
-          <button onclick="setQueueTab('med')" id="tabBtnMed" class="py-1.5 px-2 rounded-md bg-white text-slate-900 shadow-2xs font-bold transition-all text-center">
-            Médicos <span class="text-[10px] font-mono text-clinic-600">(3)</span>
-          </button>
-          <button onclick="setQueueTab('groom')" id="tabBtnGroom" class="py-1.5 px-2 rounded-md hover:text-slate-900 text-slate-600 transition-all text-center">
-            Peluquería <span class="text-[10px] font-mono text-slate-500">(2)</span>
-          </button>
-          <button onclick="setQueueTab('pay')" id="tabBtnPay" class="py-1.5 px-2 rounded-md hover:text-slate-900 text-slate-600 transition-all text-center">
-            Caja <span class="text-[10px] font-mono text-amber-600">(2)</span>
-          </button>
-        </div>
-      </div>
-
-      <!-- Listado de Pacientes en Espera -->
-      <div id="queueListContainer" class="flex-1 overflow-y-auto p-3 space-y-2">
-        <!-- Renderizado dinámico vía JS -->
-      </div>
-
-      <!-- Resumen rápido al pie de la columna 1 -->
-      <div class="p-3 border-t border-slate-200 bg-slate-50 text-[11px] text-slate-500 flex items-center justify-between font-medium">
-        <span>⏱️ T. promedio espera: <strong>11 min</strong></span>
-        <button onclick="reloadQueue()" class="text-clinic-600 hover:text-clinic-700 font-semibold flex items-center gap-1">
-          ↺ Refrescar
-        </button>
-      </div>
-    </aside>
-
-    <!-- ================= COLUMNA 2: MONITOR DE MOSTRADOR (Flex-1) ================= -->
-    <main class="flex-1 bg-slate-50 flex flex-col overflow-y-auto p-5 relative">
-      
-      <!-- Estado Cargado del Paciente (Contenedor Reactivo) -->
-      <div id="patientActiveCard" class="space-y-4">
-        
-        <!-- Banner de Alerta Financiera (Condicional) -->
-        <div id="financialAlert" class="bg-rose-50 border-l-4 border-rose-500 p-3.5 rounded-r-xl flex items-center justify-between shadow-2xs">
-          <div class="flex items-center gap-3">
-            <span class="text-xl">⚠️</span>
-            <div>
-              <p class="text-xs font-bold text-rose-800">Tutor con saldo pendiente en sistema</p>
-              <p class="text-xs text-rose-600">Saldo adeudado: <strong class="font-mono font-bold">$ 40.00</strong> (Procedimiento: Cirugía previa / Hospitalización)</p>
-            </div>
-          </div>
-          <button onclick="openPaymentModal('Max', 'Juan Pérez', 40.00, 'Saldo Pendiente')" class="px-3 py-1.5 bg-rose-600 hover:bg-rose-700 text-white rounded-lg text-xs font-bold shadow-2xs transition-colors">
-            Cobrar Saldo
-          </button>
+      <!-- CABECERA Y PESTAÑAS -->
+      <div class="p-4 border-b border-slate-200 flex items-center justify-between bg-slate-50/50">
+        <div>
+          <h2 class="text-sm font-bold text-slate-900 tracking-tight uppercase">Salas de Espera en Vivo</h2>
+          <p class="text-xs text-slate-500">Pacientes físicamente presentes en la clínica</p>
         </div>
 
-        <!-- Tarjeta Principal del Paciente -->
-        <div class="bg-white rounded-xl border border-slate-200 p-5 shadow-xs">
+        <!-- Pestañas de Área -->
+        <div class="flex items-center bg-slate-200/70 p-1 rounded-lg text-xs font-semibold">
+          <button 
+            id="tabMedicaBtn" 
+            onclick="cambiarPestanaEspera('medica')"
+            class="px-3 py-1.5 rounded-md bg-white text-slate-900 shadow-sm transition-all flex items-center gap-1.5"
+          >
+            <span>🩺</span>
+            <span>Espera Médica</span>
+            <span id="badgeCountMedica" class="ml-1 px-1.5 py-0.2 rounded-full text-[10px] bg-slate-100 text-slate-600 font-bold">0</span>
+          </button>
           
-          <div class="flex flex-col md:flex-row md:items-start justify-between gap-4 pb-5 border-b border-slate-100">
-            <!-- Avatar y Datos Core -->
-            <div class="flex items-start gap-4">
-              <div class="w-16 h-16 rounded-2xl bg-amber-100 border border-amber-200 flex items-center justify-center text-3xl shadow-2xs flex-shrink-0">
-                🐶
-              </div>
-              <div>
-                <div class="flex items-center gap-2 flex-wrap">
-                  <h1 id="pName" class="text-xl font-extrabold text-slate-900 tracking-tight">Max</h1>
-                  <span class="px-2 py-0.5 rounded-full text-xs font-semibold bg-slate-100 text-slate-600 border border-slate-200">
-                    Canino
-                  </span>
-                  <span class="px-2 py-0.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
-                    ✓ Esterilizado
-                  </span>
-                </div>
-                
-                <p id="pBreed" class="text-xs font-semibold text-slate-500 mt-1">
-                  Golden Retriever · Macho · <span class="text-slate-800 font-bold">3 años, 2 meses</span> (Nac: 15/08/2023)
-                </p>
-                
-                <div class="flex items-center gap-4 mt-2 text-xs font-mono text-slate-400">
-                  <span>Historia: <strong class="text-slate-700 font-bold" id="pRecord">HC-0924</strong></span>
-                  <span>Microchip: <strong class="text-slate-700">981098124912</strong></span>
-                  <span>GeoID: <a href="https://www.servivett.com/p/?id=rlIB0Y1e8E" target="_blank" class="text-clinic-600 underline font-bold">rlIB0Y1e8E</a></span>
-                </div>
-              </div>
-            </div>
-
-            <!-- Acciones de Cabecera -->
-            <div class="flex items-center gap-2">
-              <button onclick="alert('Generando etiqueta térmica con QR para impresora de mostrador...')" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-slate-200 hover:bg-slate-50 text-slate-700 font-semibold text-xs transition-colors">
-                <span>🖨️</span> Etiqueta Collar/Carnet
-              </button>
-              <button onclick="window.open('/carnet/?id=rlIB0Y1e8E', '_blank')" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-slate-200 hover:bg-slate-50 text-slate-700 font-semibold text-xs transition-colors">
-                <span>📲</span> Ver Carnet Digital
-              </button>
-            </div>
-          </div>
-
-          <!-- Cuadrícula: Ficha del Tutor y Semáforo de Salud Preventiva -->
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-            
-            <!-- Tarjeta del Tutor -->
-            <div class="bg-slate-50 rounded-xl p-4 border border-slate-200/80">
-              <div class="flex items-center justify-between mb-2">
-                <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">TUTOR RESPONSABLE</span>
-                <span class="text-[11px] font-semibold text-clinic-600">Cliente Verificado</span>
-              </div>
-              <p id="tutorName" class="text-sm font-bold text-slate-900">Juan Carlos Pérez Enríquez</p>
-              
-              <div class="mt-2 space-y-1 text-xs text-slate-600">
-                <p class="flex items-center gap-2">
-                  <span class="font-mono text-slate-400">C.I.:</span>
-                  <strong class="font-mono text-slate-800" id="tutorCi">1724891023</strong>
-                </p>
-                <p class="flex items-center gap-2">
-                  <span class="text-slate-400">Dirección:</span>
-                  <span id="tutorAddress">Yaruquí, Barrio San Vicente (Ref: frente a la cancha)</span>
-                </p>
-              </div>
-
-              <!-- Botón Oficial WhatsApp -->
-              <div class="mt-3 pt-3 border-t border-slate-200/60 flex items-center justify-between">
-                <span class="text-xs font-mono font-medium text-slate-600">099 107 8623</span>
-                <a 
-                  id="tutorWhatsApp"
-                  href="https://wa.me/593991078623?text=Estimado(a)%20Juan%20P%C3%A9rez,%20le%20saludamos%20desde%20Servivett%20Yaruqu%C3%AD:" 
-                  target="_blank"
-                  class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-[#25D366] hover:bg-[#20ba5a] text-white rounded-lg text-xs font-bold transition-all shadow-2xs">
-                  <svg class="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24">
-                    <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981z"/>
-                  </svg>
-                  <span>Chat WhatsApp</span>
-                </a>
-              </div>
-            </div>
-
-            <!-- Semáforo de Salud Preventiva -->
-            <div class="bg-slate-50 rounded-xl p-4 border border-slate-200/80 flex flex-col justify-between">
-              <div>
-                <div class="flex items-center justify-between mb-2">
-                  <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">SEMÁFORO DE PREVENCIÓN</span>
-                  <span class="text-[11px] font-bold text-slate-500">Carnet Vacunal</span>
-                </div>
-                
-                <div class="grid grid-cols-2 gap-2 mt-2">
-                  <!-- Vacuna Rabia -->
-                  <div class="bg-white p-2.5 rounded-lg border border-slate-200 shadow-2xs flex items-center gap-2.5">
-                    <span class="w-3 h-3 rounded-full bg-emerald-500 flex-shrink-0"></span>
-                    <div>
-                      <div class="text-[11px] font-bold text-slate-800">Antirrábica</div>
-                      <div class="text-[10px] text-emerald-600 font-semibold">Al día (Oct 2027)</div>
-                    </div>
-                  </div>
-
-                  <!-- Vacuna Séxtuple -->
-                  <div class="bg-white p-2.5 rounded-lg border border-slate-200 shadow-2xs flex items-center gap-2.5">
-                    <span class="w-3 h-3 rounded-full bg-rose-500 flex-shrink-0 animate-ping"></span>
-                    <div>
-                      <div class="text-[11px] font-bold text-slate-800">Séxtuple Canina</div>
-                      <div class="text-[10px] text-rose-600 font-semibold">🔴 Vencida (Hace 12d)</div>
-                    </div>
-                  </div>
-
-                  <!-- Antiparasitario Interno -->
-                  <div class="bg-white p-2.5 rounded-lg border border-slate-200 shadow-2xs flex items-center gap-2.5">
-                    <span class="w-3 h-3 rounded-full bg-emerald-500 flex-shrink-0"></span>
-                    <div>
-                      <div class="text-[11px] font-bold text-slate-800">Desparasitación</div>
-                      <div class="text-[10px] text-emerald-600 font-semibold">Vigente (Jul 2026)</div>
-                    </div>
-                  </div>
-
-                  <!-- Antiparasitario Externo -->
-                  <div class="bg-white p-2.5 rounded-lg border border-slate-200 shadow-2xs flex items-center gap-2.5">
-                    <span class="w-3 h-3 rounded-full bg-amber-500 flex-shrink-0"></span>
-                    <div>
-                      <div class="text-[11px] font-bold text-slate-800">Pipeta Pulgas</div>
-                      <div class="text-[10px] text-amber-600 font-semibold">Toca este mes</div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div class="mt-3 pt-2 text-right">
-                <span class="text-[11px] text-slate-400">Responsable veterinario: <strong>Dr. Óscar Guepud</strong></span>
-              </div>
-            </div>
-
-          </div>
-
-          <!-- MÓDULO DE DERIVACIÓN RÁPIDA (1 CLIC) -->
-          <div class="mt-5 pt-4 border-t border-slate-100">
-            <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider block mb-3">DERIVACIÓN OPERATIVA INMEDIATA</span>
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-2.5">
-              
-              <button onclick="derivarPaciente('consulta')" class="flex flex-col items-center justify-center p-3 rounded-xl bg-tealmed-50/70 hover:bg-tealmed-100/70 border border-tealmed-200 text-tealmed-700 font-bold text-xs transition-all active:scale-[0.98]">
-                <span class="text-xl mb-1">🩺</span>
-                <span>Enviar a Consulta</span>
-                <span class="text-[10px] text-tealmed-600/80 font-normal">Dr. de Turno</span>
-              </button>
-
-              <button onclick="derivarPaciente('peluqueria')" class="flex flex-col items-center justify-center p-3 rounded-xl bg-sky-50/70 hover:bg-sky-100/70 border border-sky-200 text-sky-700 font-bold text-xs transition-all active:scale-[0.98]">
-                <span class="text-xl mb-1">✂️</span>
-                <span>Enviar a Peluquería</span>
-                <span class="text-[10px] text-sky-600/80 font-normal">Estética / Baño</span>
-              </button>
-
-              <button onclick="window.location.href='/nuevo?tutor_id=1724891023'" class="flex flex-col items-center justify-center p-3 rounded-xl bg-slate-100 hover:bg-slate-200/70 border border-slate-200 text-slate-700 font-bold text-xs transition-all active:scale-[0.98]">
-                <span class="text-xl mb-1">🐾</span>
-                <span>+ Otra Mascota</span>
-                <span class="text-[10px] text-slate-500 font-normal">Mismo tutor</span>
-              </button>
-
-              <button onclick="alert('Enviando código carnet digital a WhatsApp del cliente...')" class="flex flex-col items-center justify-center p-3 rounded-xl bg-emerald-50/70 hover:bg-emerald-100/70 border border-emerald-200 text-clinic-700 font-bold text-xs transition-all active:scale-[0.98]">
-                <span class="text-xl mb-1">📄</span>
-                <span>Reenviar Carnet</span>
-                <span class="text-[10px] text-clinic-600/80 font-normal">Apple/Google Wallet</span>
-              </button>
-
-            </div>
-          </div>
-
+          <button 
+            id="tabPeluqueriaBtn" 
+            onclick="cambiarPestanaEspera('peluqueria')"
+            class="px-3 py-1.5 rounded-md text-slate-600 hover:text-slate-900 transition-all flex items-center gap-1.5"
+          >
+            <span>✂️</span>
+            <span>Peluquería</span>
+            <span id="badgeCountPeluqueria" class="ml-1 px-1.5 py-0.2 rounded-full text-[10px] bg-slate-100 text-slate-600 font-bold">0</span>
+          </button>
         </div>
-
       </div>
 
-      <!-- Estado Vacío (Oculto cuando hay paciente) -->
-      <div id="patientEmptyState" class="hidden flex-1 flex flex-col items-center justify-center text-center p-8 text-slate-400">
-        <div class="w-16 h-16 rounded-2xl bg-slate-100 flex items-center justify-center text-3xl mb-3">
-          🔍
-        </div>
-        <h3 class="text-sm font-bold text-slate-700">Esperando escaneo de carnet o búsqueda</h3>
-        <p class="text-xs text-slate-400 max-w-sm mt-1">Presiona <kbd class="px-1.5 py-0.5 font-mono text-[10px] bg-slate-200 text-slate-600 rounded">F1</kbd> para activar la barra o escanea una placa GeoID con la lectora de mostrador.</p>
+      <!-- LISTADO DE PACIENTES EN ESPERA (SCROLLABLE) -->
+      <div id="listaEsperaContainer" class="flex-1 overflow-y-auto p-4 space-y-3">
+        <!-- Renderizado dinámico desde Supabase -->
       </div>
+    </section>
 
-    </main>
-
-    <!-- ================= COLUMNA 3: BANDEJA DE COBROS Y AGENDA (~340px) ================= -->
-    <aside class="w-[340px] bg-white border-l border-slate-200 flex flex-col flex-shrink-0 overflow-y-auto">
+    <!-- ================= COLUMNA DERECHA: COBROS Y MOROSIDAD (40% / 5 COLS) ================= -->
+    <section class="lg:col-span-5 flex flex-col gap-6 h-[calc(100vh-100px)] overflow-y-auto pr-1">
       
-      <!-- MÓDULO SUPERIOR: CUENTAS POR COBRAR EN MOSTRADOR -->
-      <div class="p-4 border-b border-slate-200">
-        <div class="flex items-center justify-between mb-3">
-          <div class="flex items-center gap-1.5">
-            <span class="text-sm">💵</span>
-            <h2 class="text-xs font-bold text-slate-900 uppercase tracking-wider">Por Cobrar en Mostrador</h2>
+      <!-- SECCIÓN 1: ATENCIONES DEL DÍA POR COBRAR -->
+      <div class="bg-white rounded-xl border border-slate-200 shadow-sm flex flex-col overflow-hidden">
+        <div class="p-3.5 px-4 border-b border-slate-200 bg-amber-50/40 flex items-center justify-between">
+          <div class="flex items-center gap-2">
+            <span class="text-amber-600 text-sm">💳</span>
+            <h3 class="text-xs font-bold text-slate-900 uppercase tracking-tight">Atenciones por Cobrar / Liquidar</h3>
           </div>
-          <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-800">
-            2 Pendientes
+          <span id="badgePorCobrarCount" class="text-[11px] font-bold px-2 py-0.5 rounded-full bg-amber-100 text-amber-800 border border-amber-200">
+            0
           </span>
         </div>
 
-        <div class="space-y-2.5">
-          
-          <!-- Item por cobrar 1 -->
-          <div class="p-3 rounded-xl border border-slate-200 bg-slate-50/60 hover:bg-slate-50 transition-all">
-            <div class="flex items-center justify-between">
-              <span class="font-bold text-xs text-slate-900">Rocky 🐶 (Carlos R.)</span>
-              <span class="font-mono font-extrabold text-sm text-slate-900">$ 25.00</span>
-            </div>
-            <p class="text-[11px] text-slate-500 mt-0.5">Vacuna Séxtuple + Desparasitación</p>
-            
-            <div class="mt-2.5 pt-2 border-t border-slate-200/60 flex items-center justify-between">
-              <span class="text-[10px] font-semibold text-slate-400">Dr. Óscar · #ORD-1082</span>
-              <button onclick="openPaymentModal('Rocky', 'Carlos R.', 25.00, 'Vacuna Séxtuple + Desparasitante')" class="px-3 py-1 bg-clinic-600 hover:bg-clinic-700 text-white rounded-md text-xs font-bold shadow-2xs transition-colors">
-                Liquidar / Cobrar
-              </button>
-            </div>
-          </div>
-
-          <!-- Item por cobrar 2 -->
-          <div class="p-3 rounded-xl border border-slate-200 bg-slate-50/60 hover:bg-slate-50 transition-all">
-            <div class="flex items-center justify-between">
-              <span class="font-bold text-xs text-slate-900">Mimi 🐱 (Diana Vaca)</span>
-              <span class="font-mono font-extrabold text-sm text-slate-900">$ 18.00</span>
-            </div>
-            <p class="text-[11px] text-slate-500 mt-0.5">Baño Medicado + Corte de Uñas</p>
-            
-            <div class="mt-2.5 pt-2 border-t border-slate-200/60 flex items-center justify-between">
-              <span class="text-[10px] font-semibold text-slate-400">Peluquería · #ORD-1083</span>
-              <button onclick="openPaymentModal('Mimi', 'Diana Vaca', 18.00, 'Baño Medicado + Corte de Uñas')" class="px-3 py-1 bg-clinic-600 hover:bg-clinic-700 text-white rounded-md text-xs font-bold shadow-2xs transition-colors">
-                Liquidar / Cobrar
-              </button>
-            </div>
-          </div>
-
+        <div id="listaPorCobrarContainer" class="p-3 divide-y divide-slate-100 max-h-[280px] overflow-y-auto">
+          <!-- Renderizado dinámico -->
         </div>
       </div>
 
-      <!-- MÓDULO INFERIOR: AGENDA SINCRONIZADA (FEED HOY) -->
-      <div class="p-4 flex-1 flex flex-col">
-        <div class="flex items-center justify-between mb-3">
-          <div class="flex items-center gap-1.5">
-            <span class="text-sm">📅</span>
-            <h2 class="text-xs font-bold text-slate-900 uppercase tracking-wider">Agenda Sincronizada</h2>
+      <!-- SECCIÓN 2: MONITOR DE MOROSOS / SALDOS PENDIENTES -->
+      <div class="bg-white rounded-xl border border-slate-200 shadow-sm flex-1 flex flex-col overflow-hidden">
+        <div class="p-3.5 px-4 border-b border-slate-200 bg-rose-50/40 flex items-center justify-between">
+          <div class="flex items-center gap-2">
+            <span class="text-rose-600 text-sm">⚠️</span>
+            <h3 class="text-xs font-bold text-slate-900 uppercase tracking-tight">Monitor de Saldos Pendientes (Cuentas por Cobrar)</h3>
           </div>
-          <span class="text-[10px] font-semibold text-slate-400">Google Calendar</span>
+          <span id="badgeMorososTotal" class="text-[11px] font-bold px-2 py-0.5 rounded-full bg-rose-100 text-rose-800 border border-rose-200">
+            $0.00
+          </span>
         </div>
 
-        <div class="space-y-2.5 flex-1 overflow-y-auto pr-1">
-          
-          <!-- Evento 1: Cirugía -->
-          <div class="p-2.5 rounded-lg border-l-4 border-rose-500 bg-rose-50/40 border border-slate-200/80">
-            <div class="flex items-center justify-between">
-              <span class="text-[10px] font-mono font-bold text-rose-700">10:00 - 11:30</span>
-              <span class="text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.5 bg-rose-100 text-rose-800 rounded">Cirugía</span>
-            </div>
-            <p class="text-xs font-bold text-slate-800 mt-1">Ovariohisterectomía (OVH)</p>
-            <p class="text-[11px] text-slate-500">Paciente: Bella (Poodle) · Dr. Óscar</p>
-          </div>
-
-          <!-- Evento 2: Consulta General -->
-          <div class="p-2.5 rounded-lg border-l-4 border-tealmed-500 bg-tealmed-50/40 border border-slate-200/80">
-            <div class="flex items-center justify-between">
-              <span class="text-[10px] font-mono font-bold text-tealmed-700">11:45 - 12:15</span>
-              <span class="text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.5 bg-tealmed-100 text-tealmed-800 rounded">Consulta</span>
-            </div>
-            <p class="text-xs font-bold text-slate-800 mt-1">Chequeo Piel y Dermatología</p>
-            <p class="text-[11px] text-slate-500">Paciente: Thor (Bulldog) · Dr. Óscar</p>
-          </div>
-
-          <!-- Evento 3: Peluquería -->
-          <div class="p-2.5 rounded-lg border-l-4 border-sky-500 bg-sky-50/40 border border-slate-200/80">
-            <div class="flex items-center justify-between">
-              <span class="text-[10px] font-mono font-bold text-sky-700">14:00 - 15:00</span>
-              <span class="text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.5 bg-sky-100 text-sky-800 rounded">Estética</span>
-            </div>
-            <p class="text-xs font-bold text-slate-800 mt-1">Corte de Raza y Spa Antipulgas</p>
-            <p class="text-[11px] text-slate-500">Paciente: Toby (Schnauzer) · Estilista</p>
-          </div>
-
-          <!-- Evento 4: Especialista Externo -->
-          <div class="p-2.5 rounded-lg border-l-4 border-purple-500 bg-purple-50/40 border border-slate-200/80">
-            <div class="flex items-center justify-between">
-              <span class="text-[10px] font-mono font-bold text-purple-700">16:30 - 17:30</span>
-              <span class="text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.5 bg-purple-100 text-purple-800 rounded">Especialidad</span>
-            </div>
-            <p class="text-xs font-bold text-slate-800 mt-1">Ecografía Abdominal Completa</p>
-            <p class="text-[11px] text-slate-500">Paciente: Kira (Mestizo) · Dra. Invitada</p>
-          </div>
-
+        <div id="listaMorososContainer" class="p-3 flex-1 overflow-y-auto space-y-2.5">
+          <!-- Renderizado dinámico -->
         </div>
       </div>
 
-    </aside>
+    </section>
 
-  </div>
+  </main>
 
-  <!-- ================= MODAL DE COBRO Y LIQUIDACIÓN RÁPIDA ================= -->
-  <div id="paymentModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs hidden items-center justify-center z-50 p-4">
-    <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-200 transform transition-all">
-      
-      <div class="flex items-center justify-between pb-3 border-b border-slate-100">
-        <div>
-          <h3 class="text-sm font-extrabold text-slate-900 uppercase tracking-wide">Liquidar Cuenta en Caja</h3>
-          <p class="text-xs text-slate-400">Servivett Yaruquí · Comprobante Interno</p>
-        </div>
-        <button onclick="closePaymentModal()" class="text-slate-400 hover:text-slate-600 text-lg font-bold">✕</button>
-      </div>
-
-      <div class="my-4 p-4 rounded-xl bg-slate-50 border border-slate-200/80">
-        <div class="flex justify-between items-center text-xs text-slate-600 mb-1">
-          <span>Paciente / Tutor:</span>
-          <strong id="modalPatientText" class="text-slate-900">Max (Juan Pérez)</strong>
-        </div>
-        <div class="flex justify-between items-center text-xs text-slate-600 mb-2">
-          <span>Detalle:</span>
-          <span id="modalDetailText" class="text-slate-700">Consulta Médica</span>
-        </div>
-        <div class="pt-2 border-t border-slate-200 flex justify-between items-baseline">
-          <span class="text-xs font-bold text-slate-800 uppercase">Total a Liquidar:</span>
-          <span id="modalAmountText" class="font-mono text-2xl font-black text-clinic-600">$ 25.00</span>
-        </div>
-      </div>
-
-      <!-- Selección de Métodos de Pago -->
-      <div class="space-y-2">
-        <label class="text-[11px] font-bold text-slate-500 uppercase tracking-wider block">Método de Cancelación:</label>
-        <div class="grid grid-cols-2 gap-2">
-          <button onclick="confirmPayment('Efectivo')" class="p-3 border border-slate-200 hover:border-clinic-500 rounded-xl font-bold text-xs text-slate-700 hover:text-clinic-700 bg-white hover:bg-clinic-50/50 flex items-center justify-center gap-2 transition-all">
-            <span>💵</span> Efectivo
-          </button>
-          <button onclick="confirmPayment('Transferencia Pichincha/Produbanco')" class="p-3 border border-slate-200 hover:border-clinic-500 rounded-xl font-bold text-xs text-slate-700 hover:text-clinic-700 bg-white hover:bg-clinic-50/50 flex items-center justify-center gap-2 transition-all">
-            <span>🏦</span> Transferencia
-          </button>
-          <button onclick="confirmPayment('Deuna / Tarjeta')" class="p-3 border border-slate-200 hover:border-clinic-500 rounded-xl font-bold text-xs text-slate-700 hover:text-clinic-700 bg-white hover:bg-clinic-50/50 flex items-center justify-center gap-2 transition-all">
-            <span>📱</span> Deuna! / Tarjeta
-          </button>
-          <button onclick="confirmPayment('Deuda / Crédito')" class="p-3 border border-rose-200 hover:border-rose-500 rounded-xl font-bold text-xs text-rose-700 bg-rose-50/50 flex items-center justify-center gap-2 transition-all">
-            <span>⏳</span> Dejar a Crédito
-          </button>
-        </div>
-      </div>
-
-      <div class="mt-6 flex items-center justify-end gap-2">
-        <button onclick="closePaymentModal()" class="px-4 py-2 rounded-lg text-xs font-semibold text-slate-500 hover:bg-slate-100 transition-colors">
-          Cancelar
-        </button>
-      </div>
-
-    </div>
-  </div>
-
-  <!-- ================= LÓGICA JAVASCRIPT VAINILLA INTEGRADA ================= -->
+  <!-- ================= LÓGICA FRONTEND REACTIVA CON SUPABASE ================= -->
   <script>
-    // Datos de simulación para las salas de espera
-    const QUEUE_DATA = {
-      med: [
-        {
-          id: 1, avatar: '🐶', name: 'Max', breed: 'Golden Retriever', tutor: 'Juan Pérez', ci: '1724891023',
-          waitTime: '8 min', doc: 'Dr. Óscar', status: '🟡 Espera',
-          address: 'Yaruquí, Barrio San Vicente', phone: '0991078623', debt: 40.00, sex: 'Macho', age: '3 años, 2 meses',
-          history: 'HC-0924', chip: '981098124912', token: 'rlIB0Y1e8E'
-        },
-        {
-          id: 2, avatar: '🐶', name: 'Bruno', breed: 'Pastor Alemán', tutor: 'Elena Salazar', ci: '1718902341',
-          waitTime: '14 min', doc: 'Dr. Óscar', status: '🟡 Espera',
-          address: 'Checa, Calle Principal 44', phone: '0987654321', debt: 0.00, sex: 'Macho', age: '1 año, 6 meses',
-          history: 'HC-0931', chip: '981098124999', token: 'aB3kL90pQq'
-        },
-        {
-          id: 3, avatar: '🐱', name: 'Misu', breed: 'Siamés', tutor: 'Andrés Morales', ci: '1709845123',
-          waitTime: '2 min', doc: 'Dr. Óscar', status: '🟡 Espera',
-          address: 'Yaruquí, El Tejar', phone: '0998877665', debt: 0.00, sex: 'Hembra', age: '8 meses',
-          history: 'HC-0940', chip: 'Sin chip', token: 'mIsU2026Yq'
-        }
-      ],
-      groom: [
-        {
-          id: 4, avatar: '🐱', name: 'Luna', breed: 'Persa Blanco', tutor: 'Carmen Viteri', ci: '1712345678',
-          waitTime: 'En Baño', doc: 'Estética', status: '🔵 En Baño / Mesa',
-          address: 'Pifo, Barrio La Estación', phone: '0981122334', debt: 0.00, sex: 'Hembra', age: '2 años',
-          history: 'HC-0899', chip: '981098111222', token: 'LuNaPeRsA1'
-        },
-        {
-          id: 5, avatar: '🐶', name: 'Coqui', breed: 'Shih Tzu', tutor: 'Verónica Paz', ci: '1723456789',
-          waitTime: 'Mesa secado', doc: 'Estética', status: '🔵 En Baño / Mesa',
-          address: 'Yaruquí Centro', phone: '0978899001', debt: 0.00, sex: 'Macho', age: '4 años',
-          history: 'HC-0750', chip: 'Sin chip', token: 'cOqUiShIh2'
-        }
-      ],
-      pay: [
-        {
-          id: 6, avatar: '🐶', name: 'Rocky', breed: 'Mestizo', tutor: 'Carlos R.', ci: '1729988776',
-          waitTime: 'Caja', doc: 'Dr. Óscar', status: '🟢 Listo en Caja', amount: '$ 25.00',
-          address: 'Yaruquí, La Florida', phone: '0984455667', debt: 0.00, sex: 'Macho', age: '5 años',
-          history: 'HC-0620', chip: 'Sin chip', token: 'rOcKy2026X'
-        },
-        {
-          id: 7, avatar: '🐱', name: 'Mimi', breed: 'Angora', tutor: 'Diana Vaca', ci: '1714455667',
-          waitTime: 'Caja', doc: 'Peluquería', status: '🟢 Listo en Caja', amount: '$ 18.00',
-          address: 'Yaruquí, San Antonio', phone: '0993322110', debt: 0.00, sex: 'Hembra', age: '3 años',
-          history: 'HC-0715', chip: 'Sin chip', token: 'mImIAngOrA'
-        }
-      ]
-    };
+    // 1. CONFIGURACIÓN CLIENTE SUPABASE OFICIAL
+    const SUPABASE_URL = "https://llwbvbzrbdxlrhswgjft.supabase.co";
+    const SUPABASE_ANON_KEY = "sb_publishable_1k62mMMn9VzV_IT1tf2M-g_NDAeLMZX";
+    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    let activeTab = 'med';
+    // Estado local de la interfaz
+    let pestanaActiva = 'medica'; // 'medica' | 'peluqueria'
+    let debounceTimer = null;
 
-    // 1. Reloj en tiempo real
-    function updateClock() {
-      const now = new Date();
-      document.getElementById('liveClock').textContent = now.toLocaleTimeString('es-EC', { hour12: false });
-      
-      const options = { weekday: 'long', day: 'numeric', month: 'short', year: 'numeric' };
-      document.getElementById('liveDate').textContent = now.toLocaleDateString('es-EC', options);
-    }
-    setInterval(updateClock, 1000);
-    updateClock();
+    // Helper: Formato de tiempo relativo
+    function calcularTiempoEspera(timestampStr) {
+      if (!timestampStr) return "Recién llegado";
+      const llegada = new Date(timestampStr);
+      const ahora = new Date();
+      const diffMs = ahora - llegada;
+      const diffMin = Math.floor(diffMs / 60000);
 
-    // 2. Control de Pestañas de la Sala de Espera
-    function setQueueTab(tab) {
-      activeTab = tab;
-      
-      const tabs = ['med', 'groom', 'pay'];
-      tabs.forEach(t => {
-        const btn = document.getElementById('tabBtn' + t.charAt(0).toUpperCase() + t.slice(1));
-        if (t === tab) {
-          btn.className = "py-1.5 px-2 rounded-md bg-white text-slate-900 shadow-2xs font-bold transition-all text-center";
-        } else {
-          btn.className = "py-1.5 px-2 rounded-md hover:text-slate-900 text-slate-600 transition-all text-center";
-        }
-      });
-
-      renderQueueList();
+      if (diffMin < 1) return "Recién llegado";
+      if (diffMin < 60) return `Esperando ${diffMin} min`;
+      const horas = Math.floor(diffMin / 60);
+      const minRest = diffMin % 60;
+      return `Esperando ${horas}h ${minRest}m`;
     }
 
-    // 3. Renderizado de lista de espera
-    function renderQueueList() {
-      const container = document.getElementById('queueListContainer');
-      const items = QUEUE_DATA[activeTab] || [];
-      container.innerHTML = '';
+    // Helper: Formato Moneda
+    function formatMoney(amount) {
+      return new Intl.NumberFormat('es-EC', { style: 'currency', currency: 'USD' }).format(amount || 0);
+    }
 
-      if (items.length === 0) {
-        container.innerHTML = '<div class="text-center py-8 text-xs text-slate-400">No hay pacientes en esta sala.</div>';
+    // ================= 2. CARGA DE SALAS DE ESPERA =================
+    async function cargarSalasEspera() {
+      const container = document.getElementById('listaEsperaContainer');
+
+      try {
+        const { data, error } = await supabase
+          .from('citas_turnos')
+          .select('*')
+          .eq('estado', 'espera')
+          .order('hora_llegada', { ascending: true });
+
+        if (error) throw error;
+
+        const turnosMedica = (data || []).filter(t => t.area === 'medica');
+        const turnosPeluqueria = (data || []).filter(t => t.area === 'peluqueria');
+
+        document.getElementById('badgeCountMedica').innerText = turnosMedica.length;
+        document.getElementById('badgeCountPeluqueria').innerText = turnosPeluqueria.length;
+
+        const turnosMostrar = pestanaActiva === 'medica' ? turnosMedica : turnosPeluqueria;
+
+        if (turnosMostrar.length === 0) {
+          container.innerHTML = `
+            <div class="h-64 flex flex-col items-center justify-center text-center p-6 border-2 border-dashed border-slate-200 rounded-xl">
+              <div class="w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center text-slate-400 text-xl mb-3">
+                ${pestanaActiva === 'medica' ? '🩺' : '✂️'}
+              </div>
+              <h4 class="text-sm font-semibold text-slate-700">No hay pacientes en sala de espera</h4>
+              <p class="text-xs text-slate-400 mt-1 max-w-xs">Usa el buscador superior [F1] para admitir un paciente en esta sala.</p>
+            </div>
+          `;
+          return;
+        }
+
+        container.innerHTML = turnosMostrar.map(turno => {
+          const especieIcon = (turno.especie || '').toLowerCase().includes('fel') ? '🐱' : '🐶';
+          return `
+            <div class="p-3.5 bg-white border border-slate-200 hover:border-slate-300 rounded-xl shadow-sm transition-all flex items-center justify-between gap-4">
+              <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-lg bg-slate-100 flex items-center justify-center text-lg">
+                  ${especieIcon}
+                </div>
+                <div>
+                  <div class="flex items-center gap-2">
+                    <span class="font-bold text-sm text-slate-900">${turno.paciente_nombre || 'Sin Nombre'}</span>
+                    <span class="text-[11px] text-slate-400 font-medium">(${turno.especie || 'Mascota'})</span>
+                  </div>
+                  <div class="text-xs text-slate-500 mt-0.5">
+                    Tutor: <span class="font-medium text-slate-700">${turno.tutor_nombre || 'N/A'}</span>
+                  </div>
+                  <div class="inline-flex items-center gap-1 text-[11px] font-semibold text-amber-600 mt-1">
+                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                    ${calcularTiempoEspera(turno.hora_llegada || turno.created_at)}
+                  </div>
+                </div>
+              </div>
+
+              <div>
+                <button 
+                  onclick="pasarAAtencion('${turno.id}')"
+                  class="px-3.5 py-1.5 rounded-lg bg-brand-emerald hover:bg-emerald-700 text-white font-semibold text-xs shadow-sm transition-all flex items-center gap-1.5"
+                >
+                  Pasar a Atención
+                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
+                </button>
+              </div>
+            </div>
+          `;
+        }).join('');
+
+      } catch (err) {
+        console.error("Error al cargar sala de espera:", err);
+      }
+    }
+
+    function cambiarPestanaEspera(area) {
+      pestanaActiva = area;
+      const btnMed = document.getElementById('tabMedicaBtn');
+      const btnPel = document.getElementById('tabPeluqueriaBtn');
+
+      if (area === 'medica') {
+        btnMed.className = "px-3 py-1.5 rounded-md bg-white text-slate-900 shadow-sm transition-all flex items-center gap-1.5";
+        btnPel.className = "px-3 py-1.5 rounded-md text-slate-600 hover:text-slate-900 transition-all flex items-center gap-1.5";
+      } else {
+        btnPel.className = "px-3 py-1.5 rounded-md bg-white text-slate-900 shadow-sm transition-all flex items-center gap-1.5";
+        btnMed.className = "px-3 py-1.5 rounded-md text-slate-600 hover:text-slate-900 transition-all flex items-center gap-1.5";
+      }
+      cargarSalasEspera();
+    }
+
+    async function pasarAAtencion(turnoId) {
+      try {
+        const { error } = await supabase
+          .from('citas_turnos')
+          .update({ estado: 'en_atencion' })
+          .eq('id', turnoId);
+
+        if (error) throw error;
+        cargarSalasEspera();
+      } catch (err) {
+        alert("Error al pasar paciente a atención: " + err.message);
+      }
+    }
+
+    // ================= 3. CARGA DE COBROS Y MOROSIDAD =================
+    async function cargarPorCobrar() {
+      const container = document.getElementById('listaPorCobrarContainer');
+      const badge = document.getElementById('badgePorCobrarCount');
+
+      try {
+        const { data, error } = await supabase
+          .from('citas_turnos')
+          .select('*')
+          .eq('estado', 'por_cobrar')
+          .order('created_at', { ascending: false });
+
+        if (error) throw error;
+
+        badge.innerText = (data || []).length;
+
+        if (!data || data.length === 0) {
+          container.innerHTML = `
+            <div class="py-6 text-center text-xs text-slate-400">
+              No hay liquidaciones pendientes en este momento.
+            </div>
+          `;
+          return;
+        }
+
+        container.innerHTML = data.map(item => `
+          <div class="py-2.5 flex items-center justify-between gap-3">
+            <div>
+              <div class="text-xs font-bold text-slate-900">${item.paciente_nombre || 'Paciente'}</div>
+              <div class="text-[11px] text-slate-500">Tutor: ${item.tutor_nombre || 'N/A'}</div>
+            </div>
+            <button 
+              onclick="liquidarTurno('${item.id}')"
+              class="px-2.5 py-1 bg-slate-900 hover:bg-slate-800 text-white rounded-md text-xs font-semibold transition-colors"
+            >
+              Liquidar / Cobrar
+            </button>
+          </div>
+        `).join('');
+
+      } catch (err) {
+        console.error("Error al cargar atenciones por cobrar:", err);
+      }
+    }
+
+    async function liquidarTurno(turnoId) {
+      const confirmacion = confirm("¿Deseas marcar este turno como liquidado/finalizado?");
+      if (!confirmacion) return;
+
+      try {
+        const { error } = await supabase
+          .from('citas_turnos')
+          .update({ estado: 'finalizado' })
+          .eq('id', turnoId);
+
+        if (error) throw error;
+        cargarPorCobrar();
+      } catch (err) {
+        alert("Error al liquidar: " + err.message);
+      }
+    }
+
+    async function cargarMorosos() {
+      const container = document.getElementById('listaMorososContainer');
+      const totalBadge = document.getElementById('badgeMorososTotal');
+
+      try {
+        const { data, error } = await supabase
+          .from('cuentas_cobrar')
+          .select('*')
+          .gt('saldo_pendiente', 0)
+          .order('saldo_pendiente', { ascending: false });
+
+        if (error) throw error;
+
+        const totalDeuda = (data || []).reduce((acc, curr) => acc + Number(curr.saldo_pendiente || 0), 0);
+        totalBadge.innerText = formatMoney(totalDeuda);
+
+        if (!data || data.length === 0) {
+          container.innerHTML = `
+            <div class="py-8 text-center text-xs text-slate-400">
+              Excelente: No hay saldos pendientes registrados.
+            </div>
+          `;
+          return;
+        }
+
+        container.innerHTML = data.map(m => {
+          // Limpieza de teléfono para WhatsApp ecuatoriano (+593)
+          let phoneClean = (m.tutor_telefono || '').replace(/\D/g, '');
+          if (phoneClean.startsWith('0')) phoneClean = '593' + phoneClean.slice(1);
+          if (!phoneClean.startsWith('593') && phoneClean.length === 9) phoneClean = '593' + phoneClean;
+
+          const msj = encodeURIComponent(`Hola ${m.tutor_nombre}, le saludamos de Servivett Clínica Veterinaria. Nos comunicamos para coordinar la regularización de su saldo pendiente de ${formatMoney(m.saldo_pendiente)} por concepto de ${m.motivo || 'atención médica'}. Quedamos a su disposición.`);
+          const waLink = `https://wa.me/${phoneClean}?text=${msj}`;
+
+          return `
+            <div class="p-3 bg-slate-50 border border-slate-200/80 rounded-lg flex items-center justify-between gap-3">
+              <div class="min-w-0 flex-1">
+                <div class="flex items-center justify-between">
+                  <span class="text-xs font-bold text-slate-900 truncate">${m.tutor_nombre}</span>
+                  <span class="text-xs font-extrabold text-rose-600 bg-rose-50 px-1.5 py-0.5 rounded border border-rose-200">
+                    ${formatMoney(m.saldo_pendiente)}
+                  </span>
+                </div>
+                <div class="text-[11px] text-slate-500 truncate mt-0.5">${m.motivo || 'Servicios clínicos'}</div>
+              </div>
+
+              <div>
+                <a 
+                  href="${waLink}" 
+                  target="_blank"
+                  class="inline-flex items-center gap-1 px-2.5 py-1 bg-emerald-600 hover:bg-emerald-700 text-white rounded text-[11px] font-semibold transition-colors"
+                >
+                  <span>WhatsApp</span>
+                </a>
+              </div>
+            </div>
+          `;
+        }).join('');
+
+      } catch (err) {
+        console.error("Error al cargar cuentas por cobrar:", err);
+      }
+    }
+
+    // ================= 4. BÚSQUEDA UNIVERSAL (DEBOUNCE 250ms) =================
+    const searchInput = document.getElementById('globalSearchInput');
+    const dropdown = document.getElementById('searchResultsDropdown');
+
+    searchInput.addEventListener('input', (e) => {
+      clearTimeout(debounceTimer);
+      const query = e.target.value.trim();
+
+      if (!query) {
+        dropdown.classList.add('hidden');
+        dropdown.innerHTML = '';
         return;
       }
 
-      items.forEach(p => {
-        const card = document.createElement('div');
-        card.className = "p-3 rounded-xl border border-slate-200 bg-white hover:border-clinic-500 hover:shadow-xs transition-all cursor-pointer";
-        card.onclick = () => loadPatientToMonitor(p);
+      debounceTimer = setTimeout(() => {
+        ejecutarBusquedaUniversal(query);
+      }, 250);
+    });
 
-        card.innerHTML = `
-          <div class="flex items-center justify-between">
-            <div class="flex items-center gap-2">
-              <span class="text-xl">${p.avatar}</span>
-              <div>
-                <strong class="text-xs text-slate-900 font-bold block">${p.name}</strong>
-                <span class="text-[11px] text-slate-500">${p.breed}</span>
+    async function ejecutarBusquedaUniversal(termino) {
+      dropdown.classList.remove('hidden');
+      dropdown.innerHTML = `
+        <div class="p-4 text-center text-xs text-slate-400">
+          Consultando base de datos en tiempo real...
+        </div>
+      `;
+
+      try {
+        let queryBuilder = supabase.from('vista_recepcion_busqueda').select('*');
+
+        // Regla: Si son 10 dígitos numéricos exactos, búsqueda estricta por cédula
+        const esCedula = /^\d{10}$/.test(termino);
+
+        if (esCedula) {
+          queryBuilder = queryBuilder.eq('tutor_cedula', termino);
+        } else {
+          queryBuilder = queryBuilder.or(`paciente_nombre.ilike.%${termino}%,tutor_nombre.ilike.%${termino}%,uid_clinico.ilike.%${termino}%`);
+        }
+
+        const { data, error } = await queryBuilder.limit(8);
+
+        if (error) throw error;
+
+        if (!data || data.length === 0) {
+          dropdown.innerHTML = `
+            <div class="p-6 text-center">
+              <p class="text-xs font-semibold text-slate-600">No se encontraron resultados para "${termino}"</p>
+              <a href="/nuevo/" class="mt-2 inline-block text-xs font-bold text-brand-emerald hover:underline">+ Crear nueva ficha</a>
+            </div>
+          `;
+          return;
+        }
+
+        dropdown.innerHTML = data.map(res => {
+          const icono = (res.especie || '').toLowerCase().includes('fel') ? '🐱' : '🐶';
+          const tieneDeuda = Number(res.saldo_deudor || 0) > 0;
+
+          return `
+            <div class="p-3.5 hover:bg-slate-50 transition-colors flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div class="min-w-0">
+                <div class="flex items-center gap-2">
+                  <span class="text-base">${icono}</span>
+                  <span class="text-sm font-bold text-slate-900">${res.paciente_nombre}</span>
+                  <span class="text-xs text-slate-400 font-mono">UID: ${res.uid_clinico || 'S/N'}</span>
+                  ${tieneDeuda ? `
+                    <span class="badge-moroso-pulse inline-flex items-center px-2 py-0.5 rounded text-[10px] font-extrabold bg-rose-100 text-rose-700 border border-rose-300">
+                      ⚠️ Saldo pendiente: ${formatMoney(res.saldo_deudor)}
+                    </span>
+                  ` : ''}
+                </div>
+
+                <div class="text-xs text-slate-500 mt-1">
+                  Tutor: <span class="font-medium text-slate-800">${res.tutor_nombre}</span> 
+                  · C.I.: <span class="font-mono text-slate-700">${res.tutor_cedula || 'N/A'}</span>
+                  ${res.tutor_sector ? `· Sector: <span class="text-slate-600">${res.tutor_sector}</span>` : ''}
+                </div>
+              </div>
+
+              <!-- ACCIONES RÁPIDAS 1-CLIC -->
+              <div class="flex items-center gap-1.5 flex-shrink-0">
+                <button 
+                  onclick="encolarPaciente('${res.paciente_id}', '${res.paciente_nombre}', '${res.tutor_nombre}', '${res.especie}', 'medica')"
+                  class="px-2.5 py-1.5 rounded bg-slate-100 hover:bg-emerald-50 hover:text-emerald-700 hover:border-emerald-200 border border-slate-200 text-xs font-semibold text-slate-700 transition-all"
+                  title="Poner en Sala de Espera Médica"
+                >
+                  + 🩺 Médica
+                </button>
+
+                <button 
+                  onclick="encolarPaciente('${res.paciente_id}', '${res.paciente_nombre}', '${res.tutor_nombre}', '${res.especie}', 'peluqueria')"
+                  class="px-2.5 py-1.5 rounded bg-slate-100 hover:bg-cyan-50 hover:text-cyan-700 hover:border-cyan-200 border border-slate-200 text-xs font-semibold text-slate-700 transition-all"
+                  title="Poner en Peluquería"
+                >
+                  + ✂️ Peluquería
+                </button>
+
+                <a 
+                  href="/recepcion/ficha/?id=${res.paciente_id}"
+                  class="px-2.5 py-1.5 rounded bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold transition-all"
+                >
+                  Abrir Ficha
+                </a>
               </div>
             </div>
-            <span class="text-[10px] font-semibold px-2 py-0.5 rounded-full ${p.status.includes('🟢') ? 'bg-emerald-50 text-emerald-700' : (p.status.includes('🔵') ? 'bg-sky-50 text-sky-700' : 'bg-amber-50 text-amber-700')}">
-              ${p.status}
-            </span>
-          </div>
-          
-          <div class="mt-2.5 pt-2 border-t border-slate-100 flex items-center justify-between text-[11px]">
-            <span class="text-slate-400">Tutor: <strong class="text-slate-700">${p.tutor}</strong></span>
-            ${activeTab === 'pay' 
-              ? `<span class="font-mono font-bold text-slate-900 text-xs">${p.amount}</span>`
-              : `<span class="text-slate-400 font-mono">${p.waitTime}</span>`
-            }
-          </div>
+          `;
+        }).join('');
 
-          <div class="mt-2 flex items-center justify-between">
-            <span class="text-[10px] text-slate-400 font-medium">Asignado: ${p.doc}</span>
-            <button onclick="event.stopPropagation(); loadPatientToMonitor(${JSON.stringify(p).replace(/"/g, '&quot;')});" class="text-[11px] font-bold text-clinic-600 hover:text-clinic-700">
-              ${activeTab === 'pay' ? 'Cobrar ➔' : 'Ver Ficha ➔'}
-            </button>
+      } catch (err) {
+        console.error("Error en búsqueda reactiva:", err);
+        dropdown.innerHTML = `
+          <div class="p-4 text-center text-xs text-rose-500">
+            Error al consultar la vista 'vista_recepcion_busqueda': Asegúrate de que la vista exista en Supabase.
           </div>
         `;
-        container.appendChild(card);
-      });
-    }
-
-    // 4. Cargar Paciente en el Monitor Central
-    function loadPatientToMonitor(p) {
-      document.getElementById('patientEmptyState').classList.add('hidden');
-      document.getElementById('patientActiveCard').classList.remove('hidden');
-
-      // Setear datos
-      document.getElementById('pName').textContent = p.name;
-      document.getElementById('pBreed').textContent = `${p.breed} · ${p.sex} · ${p.age}`;
-      document.getElementById('pRecord').textContent = p.history;
-      document.getElementById('tutorName').textContent = p.tutor;
-      document.getElementById('tutorCi').textContent = p.ci;
-      document.getElementById('tutorAddress').textContent = p.address;
-
-      // Alerta de Deuda Financiera
-      const alertBox = document.getElementById('financialAlert');
-      if (p.debt && p.debt > 0) {
-        alertBox.classList.remove('hidden');
-        alertBox.querySelector('strong').textContent = `$ ${p.debt.toFixed(2)}`;
-      } else {
-        alertBox.classList.add('hidden');
       }
-
-      // WhatsApp link
-      const cleanPhone = (p.phone || '0991078623').replace(/\D/g, '');
-      const fullPhone = cleanPhone.startsWith('0') ? '593' + cleanPhone.substring(1) : cleanPhone;
-      document.getElementById('tutorWhatsApp').href = `https://wa.me/${fullPhone}?text=Estimado(a)%20${encodeURIComponent(p.tutor)},%20le%20escribimos%20desde%20Servivett%20Yaruqu%C3%AD%20sobre%20su%20mascota%20${encodeURIComponent(p.name)}:`;
     }
 
-    // 5. Atajo F1 y Búsqueda Reactiva
+    async function encolarPaciente(pacienteId, pacienteNombre, tutorNombre, especie, area) {
+      try {
+        const { error } = await supabase
+          .from('citas_turnos')
+          .insert([{
+            paciente_id: pacienteId,
+            paciente_nombre: pacienteNombre,
+            tutor_nombre: tutorNombre,
+            especie: especie,
+            area: area,
+            estado: 'espera',
+            hora_llegada: new Date().toISOString()
+          }]);
+
+        if (error) throw error;
+
+        // Limpiar buscador y actualizar sala
+        dropdown.classList.add('hidden');
+        searchInput.value = '';
+        pestanaActiva = area;
+        cambiarPestanaEspera(area);
+
+      } catch (err) {
+        alert("Error al encolar paciente: " + err.message);
+      }
+    }
+
+    // ================= 5. ATAJOS DE TECLADO Y EVENTOS GLOBALES =================
     window.addEventListener('keydown', (e) => {
+      // Atajo F1: Enfocar buscador
       if (e.key === 'F1') {
         e.preventDefault();
-        const searchInput = document.getElementById('globalSearchInput');
         searchInput.focus();
         searchInput.select();
       }
-    });
-
-    const searchInput = document.getElementById('globalSearchInput');
-    searchInput.addEventListener('input', (e) => {
-      const term = e.target.value.toLowerCase().trim();
-      if (!term) return;
-
-      // Buscar en todos los pacientes simulados
-      const all = [...QUEUE_DATA.med, ...QUEUE_DATA.groom, ...QUEUE_DATA.pay];
-      const match = all.find(p => 
-        p.name.toLowerCase().includes(term) ||
-        p.tutor.toLowerCase().includes(term) ||
-        p.ci.includes(term) ||
-        p.token.toLowerCase().includes(term)
-      );
-
-      if (match) {
-        loadPatientToMonitor(match);
+      // Escape: Cerrar dropdown
+      if (e.key === 'Escape') {
+        dropdown.classList.add('hidden');
       }
     });
 
-    // 6. Acciones Operativas de Derivación Rápida
-    function derivarPaciente(destino) {
-      const name = document.getElementById('pName').textContent;
-      if (destino === 'consulta') {
-        alert(`🩺 ${name} derivado exitosamente a la cola de CONSULTA MÉDICA (Dr. Óscar Guepud).`);
-      } else if (destino === 'peluqueria') {
-        alert(`✂️ ${name} derivado exitosamente al área de PELUQUERÍA Y ESTÉTICA.`);
+    // Cerrar dropdown al hacer click afuera
+    document.addEventListener('click', (e) => {
+      if (!searchInput.contains(e.target) && !dropdown.contains(e.target)) {
+        dropdown.classList.add('hidden');
       }
+    });
+
+    // ================= 6. INICIALIZACIÓN Y CICLO DE ACTUALIZACIÓN =================
+    function actualizarTodo() {
+      cargarSalasEspera();
+      cargarPorCobrar();
+      cargarMorosos();
     }
 
-    // 7. Modal de Cobro / Liquidación
-    function openPaymentModal(patient, tutor, amount, detail) {
-      document.getElementById('modalPatientText').textContent = `${patient} (${tutor})`;
-      document.getElementById('modalDetailText').textContent = detail;
-      document.getElementById('modalAmountText').textContent = `$ ${amount.toFixed(2)}`;
-      
-      const modal = document.getElementById('paymentModal');
-      modal.classList.remove('hidden');
-      modal.classList.add('flex');
-    }
+    // Carga inicial inmediata
+    actualizarTodo();
 
-    function closePaymentModal() {
-      const modal = document.getElementById('paymentModal');
-      modal.classList.add('hidden');
-      modal.classList.remove('flex');
-    }
-
-    function confirmPayment(metodo) {
-      alert(`✅ Cobro registrado con éxito vía [${metodo}]. Se emitió el comprobante para mostrador.`);
-      closePaymentModal();
-    }
-
-    function reloadQueue() {
-      renderQueueList();
-    }
-
-    // Inicialización al cargar la pantalla
-    renderQueueList();
+    // Refresco periódico cada 15 segundos (polling ligero)
+    setInterval(actualizarTodo, 15000);
   </script>
 </body>
 </html>
