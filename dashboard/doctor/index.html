@@ -3,215 +3,232 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Servivett Clinical OS · Estación Médica</title>
+  <title>Servivett OS · Estación Clínica</title>
   
-  <!-- Supabase CDN (Cliente Oficial) -->
+  <!-- Supabase JS Client v2 -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <style>
     :root {
-      --bg: #f8fafc;
-      --surface: #ffffff;
-      --border: #e2e8f0;
-      --text: #0f172a;
-      --muted: #64748b;
+      --bg: #0b0f19;
+      --surface-1: #111827;
+      --surface-2: #1f2937;
+      --surface-3: #374151;
+      --border: #374151;
+      --border-focus: #38bdf8;
+      --text: #f9fafb;
+      --muted: #9ca3af;
       --primary: #0284c7;
-      --primary-dark: #0369a1;
+      --primary-hover: #0369a1;
+      --accent: #38bdf8;
       --danger: #ef4444;
+      --warning: #f59e0b;
       --success: #10b981;
       --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
       background: var(--bg);
       color: var(--text);
       display: flex;
       flex-direction: column;
       height: 100vh;
       overflow: hidden;
+      font-size: 13px;
     }
 
-    /* TOPBAR DE NAVEGACIÓN Y AUDITORÍA */
+    /* BARRA SUPERIOR INSTITUCIONAL */
     header {
-      background: #0f172a;
-      color: #fff;
+      background: var(--surface-1);
+      border-bottom: 1px solid var(--border);
+      height: 54px;
       display: flex;
       align-items: center;
       justify-content: space-between;
       padding: 0 16px;
-      height: 52px;
       flex-shrink: 0;
+      z-index: 40;
     }
-    .brand-group { display: flex; align-items: center; gap: 12px; }
-    .brand-title { font-size: 13px; font-weight: 800; letter-spacing: 0.8px; text-transform: uppercase; }
-    .badge-branch { background: #334155; padding: 3px 8px; border-radius: 4px; font-size: 11px; }
+    .brand-section { display: flex; align-items: center; gap: 12px; }
+    .brand-logo { font-weight: 900; letter-spacing: 1px; font-size: 14px; text-transform: uppercase; color: var(--accent); }
+    .badge-branch { background: var(--surface-2); border: 1px solid var(--border); padding: 3px 8px; border-radius: 4px; font-size: 11px; color: var(--muted); }
 
-    /* MOTOR DE BÚSQUEDA GLOBAL ESTILO GVET */
-    .search-container { position: relative; width: 440px; }
+    /* MOTOR DE BÚSQUEDA GLOBAL INDEXADO (ETAPA 2) */
+    .search-wrap { position: relative; width: 480px; }
     .search-input {
       width: 100%;
-      background: #1e293b;
-      border: 1px solid #334155;
-      border-radius: 6px;
-      padding: 6px 12px;
-      color: #fff;
-      font-size: 12px;
-      outline: none;
-    }
-    .search-input:focus { border-color: var(--primary); background: #0f172a; }
-    .search-dropdown {
-      position: absolute;
-      top: 100%;
-      left: 0;
-      right: 0;
-      background: #ffffff;
-      color: var(--text);
+      background: var(--surface-2);
       border: 1px solid var(--border);
       border-radius: 6px;
-      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-      margin-top: 4px;
+      padding: 7px 12px 7px 34px;
+      color: #fff;
+      font-size: 12.5px;
+      outline: none;
+      transition: all 0.15s;
+    }
+    .search-input:focus { border-color: var(--accent); box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.15); }
+    .search-icon { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); color: var(--muted); pointer-events: none; }
+    
+    .search-results-flyout {
+      position: absolute;
+      top: calc(100% + 4px);
+      left: 0; right: 0;
+      background: var(--surface-1);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      max-height: 380px;
+      overflow-y: auto;
+      box-shadow: 0 12px 24px rgba(0,0,0,0.5);
       z-index: 100;
       display: none;
-      max-height: 280px;
-      overflow-y: auto;
     }
-    .search-item {
-      padding: 8px 12px;
+    .result-row {
+      padding: 10px 14px;
       border-bottom: 1px solid var(--border);
       cursor: pointer;
-      font-size: 12px;
       display: flex;
       justify-content: space-between;
+      align-items: center;
     }
-    .search-item:hover { background: #f1f5f9; }
+    .result-row:hover { background: var(--surface-2); }
 
-    /* TRACKING / RESPONSABLE */
-    .user-tracking { display: flex; align-items: center; gap: 10px; font-size: 12px; }
-    .vet-badge {
-      background: #0284c7;
-      padding: 3px 8px;
+    /* ACCIONES DE HEADER Y MODO FOCUS */
+    .header-actions { display: flex; align-items: center; gap: 10px; }
+    .btn-focus {
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      color: var(--muted);
+      padding: 5px 10px;
       border-radius: 4px;
+      cursor: pointer;
+      font-size: 11.5px;
       font-weight: 600;
-      font-family: var(--font-mono);
+      display: flex;
+      align-items: center;
+      gap: 6px;
     }
+    .btn-focus:hover, body.focus-mode .btn-focus { background: var(--primary); color: #fff; border-color: var(--primary); }
 
-    /* CONTENEDOR PRINCIPAL */
-    .main-layout { display: flex; flex-grow: 1; overflow: hidden; }
+    /* LAYOUT PRINCIPAL */
+    .main-workspace {
+      display: grid;
+      grid-template-columns: 320px 1fr;
+      flex-grow: 1;
+      overflow: hidden;
+      transition: grid-template-columns 0.2s ease;
+    }
+    body.focus-mode .main-workspace { grid-template-columns: 0px 1fr; }
+    body.focus-mode .queue-aside { display: none; }
 
-    /* PANEL LATERAL: COLA DE ESPERA */
-    .queue-sidebar {
-      width: 280px;
-      background: var(--surface);
+    /* ETAPA 1: COLA DE ATENCIÓN Y SALA DE ESPERA */
+    .queue-aside {
+      background: var(--surface-1);
       border-right: 1px solid var(--border);
       display: flex;
       flex-direction: column;
+      overflow: hidden;
     }
-    .queue-header {
-      padding: 12px;
+    .queue-titlebar {
+      padding: 12px 14px;
       border-bottom: 1px solid var(--border);
       display: flex;
       justify-content: space-between;
       align-items: center;
-      font-size: 12px;
-      font-weight: 700;
     }
-    .btn-new {
-      background: var(--primary);
-      color: #fff;
-      border: none;
-      padding: 4px 8px;
-      border-radius: 4px;
-      font-size: 11px;
-      cursor: pointer;
-    }
-    .queue-list { overflow-y: auto; flex-grow: 1; }
-    .queue-card {
-      padding: 10px 12px;
+    .queue-title { font-size: 11px; font-weight: 800; letter-spacing: 0.8px; color: var(--muted); text-transform: uppercase; }
+    .queue-stream { overflow-y: auto; flex-grow: 1; }
+    
+    .queue-item {
+      padding: 12px 14px;
       border-bottom: 1px solid var(--border);
       cursor: pointer;
+      border-left: 3px solid transparent;
+      transition: background 0.1s;
     }
-    .queue-card:hover, .queue-card.active { background: #f0f9ff; border-left: 3px solid var(--primary); }
-    .queue-card-name { font-weight: 700; font-size: 13px; }
-    .queue-card-meta { font-size: 11px; color: var(--muted); margin-top: 2px; }
+    .queue-item:hover { background: var(--surface-2); }
+    .queue-item.active { background: #0c2135; border-left-color: var(--accent); }
+    .queue-item-top { display: flex; justify-content: space-between; margin-bottom: 4px; }
+    .patient-label { font-weight: 700; font-size: 13.5px; }
+    .time-badge { font-size: 11px; font-family: var(--font-mono); color: var(--muted); }
+    .queue-meta { font-size: 12px; color: var(--muted); }
+    
+    .status-pill {
+      display: inline-block;
+      padding: 1px 6px;
+      border-radius: 3px;
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      margin-top: 6px;
+    }
+    .status-espera { background: #451a03; color: #fbbf24; border: 1px solid #78350f; }
+    .status-en_atencion { background: #064e3b; color: #34d399; border: 1px solid #047857; }
 
-    /* ESPACIO DE TRABAJO CLÍNICO */
-    .workspace {
-      flex-grow: 1;
+    /* ETAPA 3: FICHA MÉDICA CORE */
+    .clinical-core {
       display: flex;
       flex-direction: column;
       overflow-y: auto;
-      padding: 16px;
-      gap: 16px;
+      background: var(--bg);
     }
 
-    /* CABECERA DE PACIENTE ACTIVO */
-    .patient-header {
-      background: var(--surface);
+    /* BANNER SUPERIOR DEL PACIENTE (DATOS CRÍTICOS) */
+    .patient-banner {
+      background: var(--surface-1);
+      border-bottom: 1px solid var(--border);
+      padding: 14px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      flex-shrink: 0;
+    }
+    .core-bio { display: flex; gap: 16px; }
+    .specie-avatar {
+      width: 52px;
+      height: 52px;
+      background: var(--surface-2);
       border: 1px solid var(--border);
       border-radius: 8px;
-      padding: 12px 16px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-    .patient-bio { display: flex; align-items: center; gap: 12px; }
-    .patient-avatar {
-      width: 48px;
-      height: 48px;
-      border-radius: 6px;
-      background: #e2e8f0;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 20px;
+      font-size: 26px;
     }
-    .patient-meta-grid { display: flex; gap: 16px; font-size: 12px; margin-top: 4px; color: var(--muted); }
-    .patient-meta-grid strong { color: var(--text); }
-
-    /* PESTAÑAS CLÍNICAS (SOAP, RECETA, CONSENTIMIENTOS, LAB) */
-    .tabs-bar { display: flex; gap: 8px; border-bottom: 1px solid var(--border); }
-    .tab-btn {
-      padding: 8px 16px;
-      border: none;
-      background: none;
+    .patient-identity h1 { font-size: 20px; font-weight: 800; display: flex; align-items: center; gap: 8px; }
+    .breed-tag { font-size: 12.5px; color: var(--muted); font-weight: 400; }
+    
+    .crit-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      margin-top: 8px;
       font-size: 12px;
-      font-weight: 600;
-      cursor: pointer;
-      color: var(--muted);
-      border-bottom: 2px solid transparent;
     }
-    .tab-btn.active { color: var(--primary); border-color: var(--primary); }
+    .crit-item { display: flex; flex-direction: column; }
+    .crit-label { font-size: 10px; font-weight: 700; color: var(--muted); text-transform: uppercase; }
+    .crit-val { font-weight: 600; }
 
-    .tab-content {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 16px;
-      flex-grow: 1;
-    }
-
-    /* FORMULARIOS INTERNOS */
-    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
-    .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-bottom: 12px; }
-    label { display: block; font-size: 11px; font-weight: 700; margin-bottom: 4px; text-transform: uppercase; color: var(--muted); }
-    input, select, textarea {
-      width: 100%;
-      border: 1px solid var(--border);
+    /* SCORE DE TEMPERAMENTO (0 - 5) */
+    .temperament-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-weight: 700;
+      padding: 2px 6px;
       border-radius: 4px;
-      padding: 6px 8px;
-      font-size: 12px;
-      outline: none;
+      font-size: 11px;
     }
-    textarea { resize: vertical; min-height: 70px; }
+    .temp-safe { background: #064e3b; color: #6ee7b7; }
+    .temp-danger { background: #7f1d1d; color: #fca5a5; }
 
-    /* BOTONES DE ACCIÓN */
+    .banner-actions { display: flex; gap: 8px; }
     .btn-action {
-      background: var(--text);
+      background: var(--surface-2);
+      border: 1px solid var(--border);
       color: #fff;
-      border: none;
-      padding: 8px 14px;
+      padding: 6px 12px;
       border-radius: 4px;
       font-size: 12px;
       font-weight: 600;
@@ -219,400 +236,617 @@
       display: inline-flex;
       align-items: center;
       gap: 6px;
+      text-decoration: none;
     }
-    .btn-action:hover { background: #334155; }
+    .btn-action:hover { background: var(--surface-3); }
+    .btn-primary { background: var(--primary); border-color: var(--primary); }
+    .btn-primary:hover { background: var(--primary-hover); }
 
-    /* MODAL DE ADMISIÓN RÁPIDA */
-    .modal-backdrop {
-      position: fixed;
-      top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(15, 23, 42, 0.6);
-      display: none;
-      align-items: center;
-      justify-content: center;
-      z-index: 1000;
-    }
-    .modal-card {
-      background: #fff;
-      width: 580px;
-      border-radius: 8px;
-      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2);
-      overflow: hidden;
-    }
-    .modal-header {
-      background: #0f172a;
-      color: #fff;
-      padding: 12px 16px;
+    /* WORKSPACE EN PESTAÑAS */
+    .core-body {
+      padding: 16px 20px;
       display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-size: 13px;
+      flex-direction: column;
+      gap: 16px;
+      flex-grow: 1;
+    }
+    .tabs-nav {
+      display: flex;
+      gap: 4px;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 2px;
+    }
+    .tab-link {
+      background: none;
+      border: none;
+      color: var(--muted);
+      padding: 8px 14px;
+      font-size: 12.5px;
       font-weight: 700;
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
     }
-    .modal-body { padding: 16px; }
-    .modal-footer {
-      padding: 10px 16px;
-      border-top: 1px solid var(--border);
-      display: flex;
-      justify-content: flex-end;
-      gap: 8px;
-      background: #f8fafc;
+    .tab-link.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+    /* FORMULARIO DE CONSULTA CLÍNICA (SOAP FOCUS) */
+    .soap-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 16px;
+    }
+    .panel-card {
+      background: var(--surface-1);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 16px;
+    }
+    .form-group { margin-bottom: 12px; }
+    .form-label { display: block; font-size: 11px; font-weight: 700; color: var(--muted); text-transform: uppercase; margin-bottom: 5px; }
+    .form-input, .form-textarea, .form-select {
+      width: 100%;
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 8px;
+      color: #fff;
+      font-size: 12.5px;
+      outline: none;
+    }
+    .form-input:focus, .form-textarea:focus { border-color: var(--accent); }
+    .form-textarea { resize: vertical; min-height: 80px; line-height: 1.4; }
+
+    /* CALCULADORA FARMACOLÓGICA Y VADEMÉCUM */
+    .rx-item {
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      padding: 10px;
+      border-radius: 4px;
+      margin-bottom: 8px;
+    }
+
+    /* ESTADOS VACÍOS */
+    .empty-state {
+      padding: 48px 16px;
+      text-align: center;
+      color: var(--muted);
     }
   </style>
 </head>
 <body>
 
-  <!-- 1. TOPBAR: MARCA, MOTOR BÚSQUEDA Y AUDITORÍA -->
+  <!-- CABECERA PRINCIPAL -->
   <header>
-    <div class="brand-group">
-      <div class="brand-title">Servivett Clinical OS</div>
+    <div class="brand-section">
+      <div class="brand-logo">Servivett OS</div>
       <div class="badge-branch">Sede: Yaruquí</div>
     </div>
 
-    <!-- Motor Autocompletado GVET -->
-    <div class="search-container">
-      <input type="text" id="globalSearch" class="search-input" placeholder="🔍 Buscar por Cédula, Tutor, Paciente o Token QR..." autocomplete="off">
-      <div id="searchDropdown" class="search-dropdown"></div>
+    <!-- BUSCADOR GLOBAL INDEXADO (CLIENTS / PATIENTS) -->
+    <div class="search-wrap">
+      <span class="search-icon">🔍</span>
+      <input type="text" id="globalSearch" class="search-input" placeholder="Buscar por Nombre, Tutor, Cédula, N° Historia (UID) o Microchip..." autocomplete="off">
+      <div id="searchResults" class="search-results-flyout"></div>
     </div>
 
-    <!-- Huella de Responsabilidad / Auditoría -->
-    <div class="user-tracking" data-vet-id="VET-001" data-vet-senescyt="1005-03-453931">
-      <span>Dr. Oscar Guepud</span>
-      <span class="vet-badge">VET-001</span>
+    <!-- AUDITORÍA Y ACCIONES DE PANTALLA -->
+    <div class="header-actions">
+      <button class="btn-focus" onclick="toggleFocusMode()">⛶ Modo Focus</button>
+      <div style="font-size: 12px; font-family: var(--font-mono); color: var(--muted); padding-left: 8px; border-left: 1px solid var(--border);">
+        Dr. Oscar Guepud <span style="color:var(--accent); font-weight:700;">[VET-01]</span>
+      </div>
     </div>
   </header>
 
-  <!-- 2. LAYOUT PRINCIPAL -->
-  <div class="main-layout">
+  <!-- CONTENEDOR DE TRABAJO -->
+  <div class="main-workspace">
     
-    <!-- Barra Lateral: Pacientes en Consulta -->
-    <aside class="queue-sidebar">
-      <div class="queue-header">
-        <span>COLA DE ATENCIÓN</span>
-        <button class="btn-new" onclick="abrirModalAdmision()">+ Nuevo</button>
+    <!-- ETAPA 1: SALA DE ESPERA / COLA REAL-TIME -->
+    <aside class="queue-aside">
+      <div class="queue-titlebar">
+        <span class="queue-title">Sala de Espera (<span id="queueCount">0</span>)</span>
+        <button class="btn-action" style="padding: 2px 6px; font-size: 11px;" onclick="cargarColaEspera()">↺ Refrescar</button>
       </div>
-      <div class="queue-list" id="queueContainer">
-        <!-- Mock Data Inicial -->
-        <div class="queue-card active" onclick="seleccionarPacienteMock('Max', 'Canino', 'Shih Tzu', '4.5', 'rlIB0Y1e8E', 'Santiago Guepud', '1722334455')">
-          <div class="queue-card-name">Max 🐾</div>
-          <div class="queue-card-meta">Shih Tzu · 4.5 kg · Tutor: Santiago G.</div>
-        </div>
+      <div class="queue-stream" id="queueContainer">
+        <div class="empty-state">Consultando Supabase...</div>
       </div>
     </aside>
 
-    <!-- Área de Trabajo del Doctor -->
-    <main class="workspace">
+    <!-- ETAPA 3: FICHA MÉDICA CORE -->
+    <main class="clinical-core" id="clinicalCore">
       
-      <!-- Ficha Rápida del Paciente Seleccionado -->
-      <section class="patient-header">
-        <div class="patient-bio">
-          <div class="patient-avatar">🐶</div>
-          <div>
-            <h2 id="curName" style="font-size: 16px; font-weight: 800;">Max</h2>
-            <div class="patient-meta-grid">
-              <div>Raza: <strong id="curBreed">Shih Tzu</strong></div>
-              <div>Peso: <strong id="curWeight">4.50 kg</strong></div>
-              <div>Tutor: <strong id="curTutor">Santiago Guepud</strong></div>
-              <div>GeoID: <strong id="curToken" style="font-family: var(--font-mono);">rlIB0Y1e8E</strong></div>
+      <!-- CABECERA FIJA DEL PACIENTE ACTIVO -->
+      <section class="patient-banner" id="patientBanner">
+        <div class="core-bio">
+          <div class="specie-avatar" id="bAvatar">🐾</div>
+          <div class="patient-identity">
+            <h1>
+              <span id="bName">Seleccione un Paciente</span>
+              <span class="breed-tag" id="bBreed"></span>
+            </h1>
+            
+            <div class="crit-grid">
+              <div class="crit-item">
+                <span class="crit-label">Tutor</span>
+                <span class="crit-val" id="bTutor">--</span>
+              </div>
+              <div class="crit-item">
+                <span class="crit-label">Edad Dinámica</span>
+                <span class="crit-val" id="bAge">--</span>
+              </div>
+              <div class="crit-item">
+                <span class="crit-label">Último Peso</span>
+                <span class="crit-val" id="bWeight">-- kg</span>
+              </div>
+              <div class="crit-item">
+                <span class="crit-label">Reproductivo</span>
+                <span class="crit-val" id="bNeutered">--</span>
+              </div>
+              <div class="crit-item">
+                <span class="crit-label">Temperamento</span>
+                <span id="bTemperament">--</span>
+              </div>
+              <div class="crit-item">
+                <span class="crit-label">N° Historia / UID</span>
+                <span class="crit-val" style="font-family: var(--font-mono); color: var(--accent);" id="bUid">--</span>
+              </div>
             </div>
           </div>
         </div>
-        <div>
-          <button class="btn-action" onclick="abrirCarnetCliente()">📲 Ver Carnet / Wallet</button>
+
+        <div class="banner-actions">
+          <a id="btnWhatsApp" href="#" target="_blank" class="btn-action">💬 WhatsApp Tutor</a>
+          <button class="btn-action" onclick="abrirCarnetCliente()">📲 Carnet Digital</button>
+          <button class="btn-action btn-primary" onclick="finalizarAtencion()">✓ Finalizar Consulta</button>
         </div>
       </section>
 
-      <!-- Selector de Pestañas Funcionales -->
-      <nav class="tabs-bar">
-        <button class="tab-btn active" onclick="switchTab('recetaTab')">💊 Receta Rp/ (A5)</button>
-        <button class="tab-btn" onclick="switchTab('consentTab')">⚖️ Consentimientos (A5)</button>
-        <button class="tab-btn" onclick="switchTab('labTab')">🔬 Gabinete IA (A4)</button>
-      </nav>
+      <!-- ÁREA OPERATIVA DE CONSULTA -->
+      <div class="core-body">
+        
+        <nav class="tabs-nav">
+          <button class="tab-link active" onclick="switchTab('tabConsulta')">Evolución Clínica (SOAP)</button>
+          <button class="tab-link" onclick="switchTab('tabRx')">Prescripción A5 (Vademécum)</button>
+          <button class="tab-link" onclick="switchTab('tabHistorial')">Línea de Tiempo / Antecedentes</button>
+        </nav>
 
-      <!-- Tab 1: Prescripción Médica y Posología Automática -->
-      <div id="recetaTab" class="tab-content">
-        <div class="grid-3">
-          <div>
-            <label>Fármaco Vademécum</label>
-            <select id="vademecumSelect" onchange="calcularDosisAuto()">
-              <option value="">-- Seleccionar fármaco --</option>
-              <option value="meloxicam">Meloxicam Gotas 1.5 mg/ml</option>
-              <option value="protector">Protector Gástrico 2 mg/ml</option>
-              <option value="cefalexina">Cefalexina 500 mg</option>
-            </select>
+        <!-- SUB-TAB 1: EVOLUCIÓN CLÍNICA SOAP -->
+        <div id="tabConsulta" class="soap-grid">
+          
+          <div class="panel-card">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+              <strong style="text-transform:uppercase; font-size:11px; color:var(--accent);">Registro Médico Activo</strong>
+              <div style="display:flex; align-items:center; gap:8px;">
+                <span class="form-label" style="margin:0;">Peso Actual (kg):</span>
+                <input type="number" step="0.01" id="consultWeight" class="form-input" style="width:90px;" placeholder="0.00" oninput="sincronizarPeso(this.value)">
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Anamnesis / Motivo de Consulta</label>
+              <textarea id="fAnamnesis" class="form-textarea" placeholder="Describa el motivo, tiempo de evolución y síntomas reportados por el tutor..."></textarea>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Examen Físico por Sistemas</label>
+              <textarea id="fPhysical" class="form-textarea" placeholder="T° (°C), FC, FR, TLLC, mucosas, palpación abdominal, auscultación cardiopulmonar..."></textarea>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Diagnóstico Presuntivo / Definitivo</label>
+              <input type="text" id="fDiagnosis" class="form-input" placeholder="Diagnóstico nosológico o diferencial...">
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Plan Terapéutico / Indicaciones</label>
+              <textarea id="fTreatment" class="form-textarea" placeholder="Protocolo hospitalario o indicaciones al alta..."></textarea>
+            </div>
+
+            <button class="btn-action btn-primary" onclick="guardarConsulta()">💾 Guardar Consulta en Supabase</button>
           </div>
-          <div>
-            <label>Dosis Calculada</label>
-            <input type="text" id="calculatedDose" readonly placeholder="Cálculo automático...">
+
+          <!-- PANEL LATERAL: ALERTAS Y ACCIONES INMEDIATAS -->
+          <div style="display: flex; flex-direction: column; gap: 14px;">
+            <div class="panel-card" style="border-left: 3px solid var(--danger);">
+              <span class="form-label" style="color: var(--danger);">Alertas Críticas y Alergias</span>
+              <p id="bAllergies" style="font-size: 12px; color: var(--muted); margin-top: 4px;">Sin notas críticas registradas.</p>
+            </div>
+
+            <div class="panel-card">
+              <span class="form-label">Emisión Notarial 1-Clic</span>
+              <div style="display:flex; flex-direction:column; gap:6px; margin-top:8px;">
+                <button class="btn-action" onclick="imprimirConsentimiento('quirurgico')">📄 Consentimiento Quirúrgico (A5)</button>
+                <button class="btn-action" onclick="imprimirConsentimiento('hospitalizacion')">📄 Ingreso a Hospitalización (A5)</button>
+                <button class="btn-action" onclick="imprimirConsentimiento('alta')">📄 Deslinde Retiro Voluntario (A5)</button>
+                <button class="btn-action" onclick="imprimirConsentimiento('eutanasia')">📄 Eutanasia Humanitaria (A5)</button>
+              </div>
+            </div>
           </div>
-          <div>
-            <label>Acción</label>
-            <button class="btn-action" style="margin-top: 18px; width: 100%; justify-content: center;" onclick="agregarAlRp()">+ Añadir al Rp/</button>
+
+        </div>
+
+        <!-- SUB-TAB 2: PRESCRIPCIÓN A5 CON CÁLCULO DE DOSIS -->
+        <div id="tabRx" style="display:none;" class="panel-card">
+          <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:12px; margin-bottom:12px;">
+            <div>
+              <label class="form-label">Fármaco de Vademécum</label>
+              <select id="rxSelect" class="form-select" onchange="calcularDosis()">
+                <option value="">-- Seleccionar fármaco --</option>
+                <option value="meloxicam">Meloxicam Gotas 1.5 mg/ml (0.1 mg/kg)</option>
+                <option value="protector">Protector Gástrico 2 mg/ml (0.5 mg/kg)</option>
+                <option value="cefalexina">Cefalexina 500 mg Tabs (25 mg/kg)</option>
+              </select>
+            </div>
+            <div>
+              <label class="form-label">Dosis Calculada</label>
+              <input type="text" id="rxCalculated" class="form-input" readonly placeholder="Ajustada al peso actual...">
+            </div>
+            <div>
+              <label class="form-label">Operación</label>
+              <button class="btn-action btn-primary" style="width:100%; justify-content:center;" onclick="agregarPrescripcion()">+ Insertar en Receta</button>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Rp/ Compilado</label>
+            <textarea id="rxFinalRp" class="form-textarea" style="min-height:100px; font-family:var(--font-mono);"></textarea>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Instrucciones y Horarios al Tutor</label>
+            <textarea id="rxFinalPosology" class="form-textarea" style="min-height:100px; font-family:var(--font-mono);"></textarea>
+          </div>
+
+          <button class="btn-action" onclick="imprimirRecetaA5()">🖨️ Compilar e Imprimir Receta A5 (Doble Cara)</button>
+        </div>
+
+        <!-- SUB-TAB 3: TIMELINE DE CONSULTAS PREVIAS -->
+        <div id="tabHistorial" style="display:none;" class="panel-card">
+          <div id="historyContainer">
+            <div class="empty-state">No hay consultas previas registradas.</div>
           </div>
         </div>
 
-        <div style="margin-bottom: 12px;">
-          <label>Cuerpo de la Receta (Rp/)</label>
-          <textarea id="rpBody" placeholder="Fármacos prescritos..."></textarea>
-        </div>
-
-        <div style="margin-bottom: 12px;">
-          <label>Posología e Instrucciones al Tutor</label>
-          <textarea id="posologyBody" placeholder="Horarios e indicaciones de administración..."></textarea>
-        </div>
-
-        <button class="btn-action" onclick="imprimirRecetaA5()">🖨️ Compilar e Imprimir Receta A5 (2 Caras)</button>
-      </div>
-
-      <!-- Tab 2: Consentimientos Legales A5 -->
-      <div id="consentTab" class="tab-content" style="display: none;">
-        <div class="grid-2">
-          <div>
-            <label>Tipo de Documento Notarial</label>
-            <select id="consentType">
-              <option value="quirurgico">Quirúrgico y Anestésico</option>
-              <option value="hospitalizacion">Internamiento / Hospitalización</option>
-              <option value="alta">Alta Voluntaria contra Criterio Médico</option>
-              <option value="eutanasia">Autorización Eutanasia Humanitaria</option>
-            </select>
-          </div>
-          <div>
-            <label>Exámenes Prequirúrgicos</label>
-            <select id="preExams">
-              <option value="true">Aprobados / Realizados</option>
-              <option value="false">Exonerados por el Tutor</option>
-            </select>
-          </div>
-        </div>
-        <div style="margin-bottom: 12px;">
-          <label>Procedimiento o Diagnóstico Clínico</label>
-          <textarea id="consentDetail" placeholder="Detalle técnico del procedimiento o causa clínica..."></textarea>
-        </div>
-        <button class="btn-action" onclick="imprimirConsentimientoA5()">🖨️ Compilar Consentimiento A5</button>
-      </div>
-
-      <!-- Tab 3: Gabinete Analítico IA (A4) -->
-      <div id="labTab" class="tab-content" style="display: none;">
-        <label>Fotografía de Tira Térmica / Analizador</label>
-        <div style="border: 2px dashed var(--border); padding: 24px; text-align: center; border-radius: 6px; margin-bottom: 12px;">
-          <input type="file" id="labPhoto" accept="image/*" style="display: none;" onchange="handleLabUpload(this)">
-          <button class="btn-action" onclick="document.getElementById('labPhoto').click()">📁 Seleccionar Foto del Analizador</button>
-          <div id="labUploadStatus" style="font-size: 11px; color: var(--muted); margin-top: 8px;">Formatos soportados: JPG, PNG. Extracción directa con Gemini 2.5 Flash.</div>
-        </div>
       </div>
 
     </main>
   </div>
 
-  <!-- 3. MODAL ADMISIÓN RÁPIDA (GVET STYLE) -->
-  <div class="modal-backdrop" id="admissionModal">
-    <div class="modal-card">
-      <div class="modal-header">
-        <span>NUEVA ADMISIÓN DE PACIENTE</span>
-        <button onclick="cerrarModalAdmision()" style="background:none; border:none; color:#fff; cursor:pointer;">✕</button>
-      </div>
-      <div class="modal-body">
-        <div class="grid-2">
-          <div>
-            <label>C.I. / R.U.C. Tutor</label>
-            <input type="text" id="m_tutorCi" placeholder="1722334455">
-          </div>
-          <div>
-            <label>Nombre del Tutor</label>
-            <input type="text" id="m_tutorName" placeholder="Nombres completos">
-          </div>
-        </div>
-        <div class="grid-2">
-          <div>
-            <label>Teléfono WhatsApp</label>
-            <input type="text" id="m_tutorPhone" placeholder="0991078623">
-          </div>
-          <div>
-            <label>Nombre Paciente</label>
-            <input type="text" id="m_petName" placeholder="Nombre de la mascota">
-          </div>
-        </div>
-        <div class="grid-3">
-          <div>
-            <label>Especie</label>
-            <select id="m_petSpecies" onchange="actualizarRazas()">
-              <option value="Canino">Canino</option>
-              <option value="Felino">Felino</option>
-            </select>
-          </div>
-          <div>
-            <label>Raza</label>
-            <input list="breedList" id="m_petBreed" placeholder="Seleccione o escriba...">
-            <datalist id="breedList"></datalist>
-          </div>
-          <div>
-            <label>Peso (kg)</label>
-            <input type="number" step="0.01" id="m_petWeight" placeholder="Ej: 5.2">
-          </div>
-        </div>
-      </div>
-      <div class="modal-footer">
-        <button class="btn-action" style="background:#e2e8f0; color:#0f172a;" onclick="cerrarModalAdmision()">Cancelar</button>
-        <button class="btn-action" style="background:var(--primary);" onclick="guardarAdmision()">Guardar y Abrir Ficha</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- 4. LÓGICA CLÍNICA, VADEMÉCUM Y MOCK INTERACTIVO -->
+  <!-- LÓGICA SUPABASE CLIENT Y CÁLCULOS CLÍNICOS -->
   <script>
-    // Catálogos de Autocompletado
-    const RAZAS = {
-      Canino: ["Mestizo", "Shih Tzu", "Poodle / Caniche", "Schnauzer", "Golden Retriever", "Pastor Alemán", "Bulldog Francés", "Pitbull", "Chihuahua"],
-      Felino: ["Mestizo / DSH", "Siamés", "Persa", "Maine Coon", "Angora"]
-    };
+    // CONFIGURACIÓN OFICIAL SUPABASE SERVIVETT
+    const SUPABASE_URL = "https://TU_PROYECTO_SUPABASE.supabase.co";
+    const SUPABASE_ANON_KEY = "TU_SUPABASE_ANON_KEY";
+    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    // Vademécum Oficial Servivett
+    // Estado del Paciente y Cita Activa
+    let activeAppointment = null;
+    let activePatient = null;
+    let activeWeight = 0.0;
+
+    // Vademécum Paramétrico
     const VADEMECUM = {
       meloxicam: { nombre: "Meloxicam Gotas 1.5 mg/ml", pres: "Frasco gotero 10 ml (#1)", dosis: 0.1, conc: 1.5, gotasMl: 20, via: "oral", freq: "c/24h con comida", dias: 4 },
-      protector: { nombre: "Protector Gástrico 2 mg/ml", pres: "Frasco 30 ml (#1)", dosis: 0.5, conc: 2.0, gotasMl: null, via: "oral", freq: "c/24h ayunas (20m antes)", dias: 7 },
+      protector: { nombre: "Protector Gástrico 2 mg/ml", pres: "Frasco 30 ml (#1)", dosis: 0.5, conc: 2.0, gotasMl: null, via: "oral", freq: "c/24h en ayunas (20 min antes)", dias: 7 },
       cefalexina: { nombre: "Cefalexina 500 mg", pres: "Tabletas (#10)", dosis: 25.0, conc: 500.0, gotasMl: null, via: "oral", freq: "c/12h tras comidas", dias: 7 }
     };
 
-    let pacienteActual = {
-      nombre: "Max", especie: "Canino", raza: "Shih Tzu", peso: 4.5, token: "rlIB0Y1e8E", tutor: "Santiago Guepud", ci: "1722334455"
-    };
+    // 1. CARGA INICIAL DE COLA REAL-TIME (ETAPA 1)
+    async function cargarColaEspera() {
+      const container = document.getElementById("queueContainer");
+      container.innerHTML = '<div class="empty-state">Actualizando...</div>';
 
-    // Autocompletado al cargar
-    function actualizarRazas() {
-      const esp = document.getElementById("m_petSpecies").value;
-      const dl = document.getElementById("breedList");
-      dl.innerHTML = "";
-      (RAZAS[esp] || []).forEach(r => {
-        const opt = document.createElement("option");
-        opt.value = r;
-        dl.appendChild(opt);
-      });
-    }
-    actualizarRazas();
+      try {
+        const { data: appointments, error } = await supabase
+          .from('appointments')
+          .select(`
+            id, scheduled_at, reason, category, status, arrival_time,
+            patient:patients (
+              id, name, species, breed, gender, is_neutered, neutered_date, birth_date,
+              clinical_record_number, microchip, temperament_score, allergies_or_notes,
+              client:clients ( id, full_name, identification, phone, address )
+            )
+          `)
+          .in('status', ['espera', 'en_atencion'])
+          .order('arrival_time', { ascending: true });
 
-    // Motor de Búsqueda Dinámico (GVET Style)
-    const mockDB = [
-      { nombre: "Max", especie: "Canino", raza: "Shih Tzu", peso: 4.5, token: "rlIB0Y1e8E", tutor: "Santiago Guepud", ci: "1722334455" },
-      { nombre: "Luna", especie: "Felino", raza: "Siamés", peso: 3.2, token: "x9Ak2L0p1Z", tutor: "María Pérez", ci: "1711223344" }
-    ];
+        if (error) throw error;
 
-    const searchInput = document.getElementById("globalSearch");
-    const dropdown = document.getElementById("searchDropdown");
+        document.getElementById("queueCount").innerText = appointments ? appointments.length : 0;
 
-    searchInput.addEventListener("input", (e) => {
-      const q = e.target.value.toLowerCase().trim();
-      if (!q) { dropdown.style.display = "none"; return; }
+        if (!appointments || appointments.length === 0) {
+          container.innerHTML = '<div class="empty-state">No hay pacientes en sala de espera.</div>';
+          return;
+        }
 
-      const matches = mockDB.filter(p => 
-        p.nombre.toLowerCase().includes(q) || 
-        p.tutor.toLowerCase().includes(q) || 
-        p.ci.includes(q) ||
-        p.token.toLowerCase().includes(q)
-      );
-
-      if (matches.length > 0) {
-        dropdown.innerHTML = matches.map(p => `
-          <div class="search-item" onclick="seleccionarPacienteMock('${p.nombre}', '${p.especie}', '${p.raza}', '${p.peso}', '${p.token}', '${p.tutor}', '${p.ci}')">
-            <div><strong>${p.nombre}</strong> (${p.especie} · ${p.raza})</div>
-            <div style="color:var(--muted);">${p.tutor} · CI: ${p.ci}</div>
+        container.innerHTML = appointments.map(app => `
+          <div class="queue-item ${app.status === 'en_atencion' ? 'active' : ''}" onclick='abrirFichaPaciente(${JSON.stringify(app)})'>
+            <div class="queue-item-top">
+              <span class="patient-label">${app.patient.name}</span>
+              <span class="time-badge">${app.arrival_time ? new Date(app.arrival_time).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}) : '--:--'}</span>
+            </div>
+            <div class="queue-meta">${app.patient.species} · ${app.patient.breed}</div>
+            <div class="queue-meta">Tutor: ${app.patient.client ? app.patient.client.full_name : 'No asignado'}</div>
+            <span class="status-pill status-${app.status}">${app.status.replace('_', ' ')}</span>
           </div>
-        `).join("");
-        dropdown.style.display = "block";
-      } else {
-        dropdown.style.display = "none";
+        `).join('');
+
+      } catch (err) {
+        console.error("Error al cargar appointments:", err);
+        container.innerHTML = `<div class="empty-state" style="color:var(--danger)">Error: ${err.message}</div>`;
+      }
+    }
+
+    // 2. BUSCADOR GLOBAL INDEXADO (ETAPA 2)
+    const searchInput = document.getElementById("globalSearch");
+    const resultsBox = document.getElementById("searchResults");
+
+    searchInput.addEventListener("input", async (e) => {
+      const q = e.target.value.trim();
+      if (q.length < 2) { resultsBox.style.display = "none"; return; }
+
+      try {
+        const { data: patients, error } = await supabase
+          .from('patients')
+          .select(`
+            id, name, species, breed, gender, is_neutered, neutered_date, birth_date,
+            clinical_record_number, microchip, temperament_score, allergies_or_notes,
+            client:clients ( id, full_name, identification, phone, address )
+          `)
+          .or(`name.ilike.%${q}%,clinical_record_number.ilike.%${q}%,microchip.ilike.%${q}%`)
+          .limit(8);
+
+        if (error) throw error;
+
+        if (patients && patients.length > 0) {
+          resultsBox.innerHTML = patients.map(p => `
+            <div class="result-row" onclick='abrirFichaDirecta(${JSON.stringify(p)})'>
+              <div>
+                <strong>${p.name}</strong> (${p.species} / ${p.breed})
+                <div style="font-size:11px; color:var(--muted)">Tutor: ${p.client ? p.client.full_name : 'N/A'} · CI: ${p.client ? p.client.identification : 'N/A'}</div>
+              </div>
+              <span style="font-family:var(--font-mono); font-size:11px; color:var(--accent);">${p.clinical_record_number}</span>
+            </div>
+          `).join('');
+          resultsBox.style.display = "block";
+        } else {
+          resultsBox.innerHTML = '<div style="padding:10px; color:var(--muted);">Sin coincidencias.</div>';
+          resultsBox.style.display = "block";
+        }
+      } catch (err) {
+        console.error("Error en búsqueda:", err);
       }
     });
 
-    function seleccionarPacienteMock(nom, esp, raza, peso, token, tutor, ci) {
-      pacienteActual = { nombre: nom, especie: esp, raza: raza, peso: parseFloat(peso), token: token, tutor: tutor, ci: ci };
-      document.getElementById("curName").innerText = nom;
-      document.getElementById("curBreed").innerText = raza;
-      document.getElementById("curWeight").innerText = peso + " kg";
-      document.getElementById("curTutor").innerText = tutor;
-      document.getElementById("curToken").innerText = token;
-      dropdown.style.display = "none";
-      searchInput.value = "";
-      calcularDosisAuto();
+    // 3. APERTURA Y RENDERIZADO DE LA FICHA MÉDICA (ETAPA 3)
+    async function abrirFichaPaciente(app) {
+      activeAppointment = app;
+      await renderCoreData(app.patient);
+      
+      // Actualizar estado a 'en_atencion' si estaba en 'espera'
+      if (app.status === 'espera') {
+        await supabase.from('appointments').update({ status: 'en_atencion' }).eq('id', app.id);
+        cargarColaEspera();
+      }
     }
 
-    // Cálculo Posológico Reactivo
-    function calcularDosisAuto() {
-      const key = document.getElementById("vademecumSelect").value;
-      if (!key) { document.getElementById("calculatedDose").value = ""; return; }
-      
+    async function abrirFichaDirecta(patient) {
+      activeAppointment = null;
+      resultsBox.style.display = "none";
+      searchInput.value = "";
+      await renderCoreData(patient);
+    }
+
+    async function renderCoreData(p) {
+      activePatient = p;
+
+      // Icono según especie
+      document.getElementById("bAvatar").innerText = p.species.toLowerCase() === 'canino' ? '🐶' : (p.species.toLowerCase() === 'felino' ? '🐱' : '🐾');
+      document.getElementById("bName").innerText = p.name;
+      document.getElementById("bBreed").innerText = `(${p.species} · ${p.breed} · ${p.gender || 'N/E'})`;
+      document.getElementById("bTutor").innerText = p.client ? p.client.full_name : 'Sin asignar';
+      document.getElementById("bUid").innerText = p.clinical_record_number;
+      document.getElementById("bNeutered").innerText = p.is_neutered ? `Sí (${p.neutered_date || 'Fecha no reg.'})` : 'Entero / No';
+      document.getElementById("bAllergies").innerText = p.allergies_or_notes || 'Sin alergias o notas críticas registradas.';
+
+      // Cálculo Dinámico de Edad
+      document.getElementById("bAge").innerText = calcularEdad(p.birth_date);
+
+      // Score de Temperamento (0 - 5)
+      const tScore = p.temperament_score || 0;
+      const tContainer = document.getElementById("bTemperament");
+      if (tScore >= 3) {
+        tContainer.innerHTML = `<span class="temperament-badge temp-danger">⚠️ Nivel ${tScore}/5 (Riesgo / Bozal)</span>`;
+      } else {
+        tContainer.innerHTML = `<span class="temperament-badge temp-safe">✓ Nivel ${tScore}/5 (Manejo Normal)</span>`;
+      }
+
+      // Enlace de WhatsApp directo al tutor
+      const btnWa = document.getElementById("btnWhatsApp");
+      if (p.client && p.client.phone) {
+        let cleanPhone = p.client.phone.replace(/\D/g, '');
+        if (cleanPhone.startsWith('0')) cleanPhone = '593' + cleanPhone.substring(1);
+        btnWa.href = `https://wa.me/${cleanPhone}?text=Estimado(a)%20${encodeURIComponent(p.client.full_name)},%20le%20escribimos%20desde%20Servivett%20sobre%20su%20mascota%20${encodeURIComponent(p.name)}:`;
+        btnWa.style.display = "inline-flex";
+      } else {
+        btnWa.style.display = "none";
+      }
+
+      // Obtener Último Peso Registrado de Supabase
+      const { data: pesos } = await supabase
+        .from('weight_records')
+        .select('weight_kg, recorded_at')
+        .eq('patient_id', p.id)
+        .order('recorded_at', { ascending: false })
+        .limit(1);
+
+      if (pesos && pesos.length > 0) {
+        activeWeight = parseFloat(pesos[0].weight_kg);
+        document.getElementById("bWeight").innerText = `${activeWeight.toFixed(2)} kg`;
+        document.getElementById("consultWeight").value = activeWeight;
+      } else {
+        activeWeight = 0.0;
+        document.getElementById("bWeight").innerText = `-- kg`;
+        document.getElementById("consultWeight").value = '';
+      }
+
+      // Cargar historial de consultas de este paciente
+      cargarHistorialPrevio(p.id);
+    }
+
+    function calcularEdad(fechaNac) {
+      if (!fechaNac) return 'Desconocida';
+      const nac = new Date(fechaNac);
+      const hoy = new Date();
+      let anios = hoy.getFullYear() - nac.getFullYear();
+      let meses = hoy.getMonth() - nac.getMonth();
+      if (meses < 0 || (meses === 0 && hoy.getDate() < nac.getDate())) anios--;
+      return anios > 0 ? `${anios} año(s)` : `${meses <= 0 ? 1 : meses} mes(es)`;
+    }
+
+    // 4. MODO FOCUS (COLAPSA INTERFAZ PARA ATENCIÓN)
+    function toggleFocusMode() {
+      document.body.classList.toggle("focus-mode");
+    }
+
+    // 5. CALCULADORA FARMACOLÓGICA Y VADEMÉCUM
+    function sincronizarPeso(val) {
+      activeWeight = parseFloat(val) || 0.0;
+      calcularDosis();
+    }
+
+    function calcularDosis() {
+      const key = document.getElementById("rxSelect").value;
+      if (!key || activeWeight <= 0) {
+        document.getElementById("rxCalculated").value = "";
+        return;
+      }
+
       const med = VADEMECUM[key];
-      const peso = pacienteActual.peso;
-      let pos = "";
+      let str = "";
 
       if (key === "meloxicam") {
-        const gotas = Math.max(1, Math.round(((med.dosis * peso) / med.conc) * med.gotasMl));
-        pos = `${gotas} gotas ${med.freq} por ${med.dias} días`;
+        const gotas = Math.max(1, Math.round(((med.dosis * activeWeight) / med.conc) * med.gotasMl));
+        str = `${gotas} gotas ${med.freq} por ${med.dias} días`;
       } else if (key === "protector") {
-        const ml = Math.max(0.5, ((med.dosis * peso) / med.conc).toFixed(1));
-        pos = `${ml} ml ${med.freq} por ${med.dias} días`;
+        const ml = Math.max(0.5, ((med.dosis * activeWeight) / med.conc).toFixed(1));
+        str = `${ml} ml ${med.freq} por ${med.dias} días`;
       } else if (key === "cefalexina") {
-        const tabs = ((med.dosis * peso) / med.conc).toFixed(2);
-        pos = `${tabs} tab(s) ${med.freq} por ${med.dias} días`;
+        const tabs = ((med.dosis * activeWeight) / med.conc).toFixed(2);
+        str = `${tabs} tableta(s) ${med.freq} por ${med.dias} días`;
       }
-      document.getElementById("calculatedDose").value = pos;
+
+      document.getElementById("rxCalculated").value = str;
     }
 
-    function agregarAlRp() {
-      const key = document.getElementById("vademecumSelect").value;
-      const dosis = document.getElementById("calculatedDose").value;
+    function agregarPrescripcion() {
+      const key = document.getElementById("rxSelect").value;
+      const dosis = document.getElementById("rxCalculated").value;
       if (!key || !dosis) return;
 
       const med = VADEMECUM[key];
-      const rpArea = document.getElementById("rpBody");
-      const posArea = document.getElementById("posologyBody");
+      const rpArea = document.getElementById("rxFinalRp");
+      const posArea = document.getElementById("rxFinalPosology");
 
       rpArea.value += (rpArea.value ? "\n\n" : "") + `• ${med.nombre}\n  Presentación: ${med.pres}`;
       posArea.value += (posArea.value ? "\n" : "") + `• ${med.nombre}: Administrar ${dosis} vía ${med.via}.`;
     }
 
-    // Control de Pestañas
+    // 6. GUARDAR CONSULTA EN SUPABASE
+    async function guardarConsulta() {
+      if (!activePatient) { alert("Seleccione un paciente primero."); return; }
+      
+      const peso = parseFloat(document.getElementById("consultWeight").value);
+      if (!peso || peso <= 0) { alert("Ingrese el peso actual del paciente."); return; }
+
+      const consultaPayload = {
+        patient_id: activePatient.id,
+        appointment_id: activeAppointment ? activeAppointment.id : null,
+        weight_kg: peso,
+        anamnesis: document.getElementById("fAnamnesis").value,
+        physical_exam: document.getElementById("fPhysical").value,
+        diagnosis: document.getElementById("fDiagnosis").value,
+        treatment_plan: document.getElementById("fTreatment").value
+      };
+
+      try {
+        const { error } = await supabase.from('consultations').insert(consultaPayload);
+        if (error) throw error;
+
+        // Registrar peso en historial
+        await supabase.from('weight_records').insert({
+          patient_id: activePatient.id,
+          weight_kg: peso
+        });
+
+        alert("✓ Consulta clínica guardada con éxito.");
+        cargarHistorialPrevio(activePatient.id);
+      } catch (err) {
+        alert("Error al guardar consulta: " + err.message);
+      }
+    }
+
+    // 7. HISTORIAL CRONOLÓGICO
+    async function cargarHistorialPrevio(patientId) {
+      const container = document.getElementById("historyContainer");
+      const { data: cons, error } = await supabase
+        .from('consultations')
+        .select('*')
+        .eq('patient_id', patientId)
+        .order('consultation_date', { ascending: false });
+
+      if (!cons || cons.length === 0) {
+        container.innerHTML = '<div class="empty-state">No hay consultas previas registradas.</div>';
+        return;
+      }
+
+      container.innerHTML = cons.map(c => `
+        <div style="background:var(--surface-2); padding:12px; border-radius:6px; margin-bottom:12px; border:1px solid var(--border);">
+          <div style="display:flex; justify-content:space-between; margin-bottom:6px;">
+            <strong style="color:var(--accent); font-size:12px;">Consulta: ${new Date(c.consultation_date).toLocaleDateString()} ${new Date(c.consultation_date).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}</strong>
+            <span style="font-family:var(--font-mono); font-size:11px;">${c.weight_kg} kg</span>
+          </div>
+          <div style="margin-bottom:4px;"><strong>Diagnóstico:</strong> ${c.diagnosis || 'No especificado'}</div>
+          <div style="color:var(--muted); font-size:12px; margin-bottom:4px;"><strong>Anamnesis:</strong> ${c.anamnesis || '--'}</div>
+          <div style="color:var(--muted); font-size:12px;"><strong>Plan:</strong> ${c.treatment_plan || '--'}</div>
+        </div>
+      `).join('');
+    }
+
+    // 8. FINALIZAR CITA
+    async function finalizarAtencion() {
+      if (activeAppointment) {
+        await supabase.from('appointments').update({ status: 'finalizado' }).eq('id', activeAppointment.id);
+        alert("Atención finalizada.");
+        cargarColaEspera();
+      }
+    }
+
     function switchTab(tabId) {
-      document.querySelectorAll(".tab-content").forEach(el => el.style.display = "none");
-      document.querySelectorAll(".tab-btn").forEach(el => el.classList.remove("active"));
-      document.getElementById(tabId).style.display = "block";
+      document.querySelectorAll(".soap-grid, #tabRx, #tabHistorial").forEach(el => el.style.display = "none");
+      document.querySelectorAll(".tab-link").forEach(el => el.classList.remove("active"));
+      document.getElementById(tabId).style.display = (tabId === 'tabConsulta') ? 'grid' : 'block';
       event.target.classList.add("active");
     }
 
-    // Modal de Admisión
-    function abrirModalAdmision() { document.getElementById("admissionModal").style.display = "flex"; }
-    function cerrarModalAdmision() { document.getElementById("admissionModal").style.display = "none"; }
-    function guardarAdmision() {
-      const nuevoToken = Math.random().toString(36).substring(2, 12);
-      seleccionarPacienteMock(
-        document.getElementById("m_petName").value || "Paciente",
-        document.getElementById("m_petSpecies").value,
-        document.getElementById("m_petBreed").value || "Mestizo",
-        document.getElementById("m_petWeight").value || "1.0",
-        nuevoToken,
-        document.getElementById("m_tutorName").value || "Tutor",
-        document.getElementById("m_tutorCi").value || "9999999999"
-      );
-      cerrarModalAdmision();
+    function abrirCarnetCliente() {
+      if (!activePatient) return;
+      window.open(`/carnet/?id=${activePatient.clinical_record_number}`, '_blank');
     }
 
-    function abrirCarnetCliente() {
-      window.open(`/carnet/?id=${pacienteActual.token}`, '_blank');
+    function imprimirConsentimiento(tipo) {
+      if (!activePatient) return alert("Seleccione paciente.");
+      alert(`Abriendo plantilla legal A5 [${tipo.toUpperCase()}] para ${activePatient.name}...`);
     }
 
     function imprimirRecetaA5() {
-      alert(`Compilando prescripción médica A5 oficial para ${pacienteActual.nombre} con firma de Dr. Oscar Guepud...`);
+      if (!activePatient) return alert("Seleccione paciente.");
+      alert(`Compilando prescripción A5 con firma del Dr. Oscar Guepud...`);
     }
 
-    function imprimirConsentimientoA5() {
-      const tipo = document.getElementById("consentType").value;
-      alert(`Compilando consentimiento notarial (${tipo}) A5 para el tutor ${pacienteActual.tutor}...`);
-    }
-
-    function handleLabUpload(input) {
-      if (input.files && input.files[0]) {
-        document.getElementById("labUploadStatus").innerText = `Procesando ${input.files[0].name} mediante Gemini 2.5 Flash...`;
-      }
-    }
+    // Inicializar al cargar pantalla
+    window.addEventListener('DOMContentLoaded', () => {
+      cargarColaEspera();
+    });
   </script>
 </body>
 </html>
